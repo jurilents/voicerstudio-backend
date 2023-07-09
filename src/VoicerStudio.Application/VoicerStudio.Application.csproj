@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.60.0.3071" />
+    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.29.0" />
+    <PackageReference Include="NAudio" Version="2.1.0" />
+    <PackageReference Include="NeerCore" Version="2.0.1" />
+    <PackageReference Include="Teva.Common.Cultures" Version="1.0.2" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <NuGetPackageRoot>$(USERPROFILE)\.nuget\packages</NuGetPackageRoot>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <Content Include="$(NuGetPackageRoot)\microsoft.cognitiveservices.speech\1.29.0\runtimes\win-x64\native\Microsoft.CognitiveServices.Speech.core.dll" />
+    <Content Include="$(NuGetPackageRoot)\microsoft.cognitiveservices.speech\1.29.0\runtimes\win-x64\native\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
+  </ItemGroup>
+
+</Project>

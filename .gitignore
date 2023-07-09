@@ -1,0 +1,27 @@
+# Ignore credentials
+google-credentials.json
+appsettings.json
+
+# Ignore personal EAS secrets file
+secret.aes
+
+# App logs
+logs/
+*.log
+
+# .NET caches
+bin/
+obj/
+/packages/
+
+# JetBrains Rider caches
+riderModule.iml
+/_ReSharper.Caches/
+.idea/
+
+# Visual Studio caches
+.vs/
+.vscode/
+
+# Mac OS caches
+.DS_Store
