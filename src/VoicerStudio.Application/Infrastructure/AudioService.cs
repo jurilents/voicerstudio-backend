@@ -1,10 +1,26 @@
+using FFMpegCore;
+using FFMpegCore.Pipes;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NAudio.Wave;
+using VoicerStudio.Application.Extensions;
+using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
 
 namespace VoicerStudio.Application.Infrastructure;
 
 internal sealed class AudioService : IAudioService
 {
+    private readonly ILogger<AudioService> _logger;
+    private readonly AudioOptions _options;
+
+    public AudioService(ILogger<AudioService> logger, IOptions<AudioOptions> optionsAccessor)
+    {
+        _logger = logger;
+        _options = optionsAccessor.Value;
+    }
+
+
     public async Task<byte[]> MergeAsync(byte[][] audioFiles, double[] offsetsInMilliseconds)
     {
         var buffer = new byte[4096]; // 1024 * 4
@@ -37,6 +53,80 @@ internal sealed class AudioService : IAudioService
             // ReSharper disable once MethodHasAsyncOverload
             waveFileWriter?.Dispose();
         }
+    }
+
+    public async Task<ResizeResult> ResizeAsync(byte[] audioData, TimeSpan targetDuration)
+    {
+        var outputStream = new MemoryStream();
+        var inputStream = new MemoryStream(audioData);
+
+        var inputDuration = await GetAudioDurationAsync(inputStream);
+
+        try
+        {
+            if (inputDuration == TimeSpan.Zero)
+                throw new ArgumentException("Audio data is not valid", nameof(audioData));
+
+            inputStream.Position = 0;
+
+            var speed = CalcSpeed(inputDuration, targetDuration);
+
+            var success = await FFMpegArguments
+                .FromPipeInput(new StreamPipeSource(inputStream))
+                .OutputToPipe(new StreamPipeSink(outputStream), options => options
+                    .WithAudioFilters(filter => filter.AddATempo(speed))
+                    .ForceFormat("wav"))
+                .ProcessAsynchronously();
+
+            outputStream.Position = 0;
+            var outputFileReader = new WaveFileReader(outputStream);
+            var outputDuration = outputFileReader.TotalTime;
+
+            outputStream.Position = 0;
+            var outputFile = outputStream.ToArray();
+
+            return new ResizeResult(
+                Success: true,
+                AudioData: outputFile,
+                InputDuration: inputDuration,
+                OutputDuration: outputDuration
+            );
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "Error occured while executing FFMpeg");
+        }
+        finally
+        {
+            await inputStream.DisposeAsync();
+            await outputStream.DisposeAsync();
+        }
+
+        return new ResizeResult(
+            Success: false,
+            AudioData: audioData,
+            InputDuration: inputDuration,
+            OutputDuration: inputDuration
+        );
+    }
+
+    private static async Task<TimeSpan> GetAudioDurationAsync(Stream stream)
+    {
+        try
+        {
+            await using var waveFileReader = new WaveFileReader(stream);
+            return waveFileReader.TotalTime;
+        }
+        catch (Exception)
+        {
+            return TimeSpan.Zero;
+        }
+    }
+
+    private double CalcSpeed(TimeSpan originalDuration, TimeSpan targetDuration)
+    {
+        var speed = originalDuration.TotalMilliseconds / targetDuration.TotalMilliseconds;
+        return Math.Clamp(speed, -_options.MaxSpeedDelta, _options.MaxSpeedDelta);
     }
 
     private static void WriteSilence(WaveFileWriter waveFileWriter, double duration)

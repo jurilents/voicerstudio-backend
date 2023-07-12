@@ -9,11 +9,11 @@ namespace VoicerStudio.Api.Controllers;
 [Route("/v1/speech")]
 public class SpeechController : V1Controller
 {
-    private readonly ICognitiveService _cognitiveService;
+    private readonly IEnumerable<ICognitiveService> _cognitiveServices;
 
-    public SpeechController(ICognitiveService cognitiveService)
+    public SpeechController(IEnumerable<ICognitiveService> cognitiveServices)
     {
-        _cognitiveService = cognitiveService;
+        _cognitiveServices = cognitiveServices;
     }
 
 
@@ -22,9 +22,10 @@ public class SpeechController : V1Controller
     public async Task<IActionResult> GenerateSingle(
         [FromBody] SpeechGenerateRequest request, [FromCredentialsHeader] string credentials)
     {
-        var result = await _cognitiveService.GenerateSpeechAsync(request, credentials);
+        var service = _cognitiveServices.First(x => x.ServiceName == request.Service);
+        var result = await service.GenerateSpeechAsync(request, credentials);
 
-        Response.AddDurationHeader(result.Duration);
+        Response.AddDurationHeader(result.OutputDuration, result.InputDuration);
         return File(result.AudioData, result.MimeType);
     }
 
@@ -34,9 +35,11 @@ public class SpeechController : V1Controller
     public async Task<IActionResult> GenerateBatch(
         [FromBody] SpeechGenerateRequest[] requests, [FromCredentialsHeader] string credentials)
     {
-        var result = await _cognitiveService.GenerateSpeechAsync(requests, credentials);
+        var serviceName = requests.First().Service;
+        var service = _cognitiveServices.First(x => x.ServiceName == serviceName);
+        var result = await service.GenerateSpeechAsync(requests, credentials);
 
-        Response.AddDurationHeader(result.Duration);
+        Response.AddDurationHeader(result.OutputDuration, result.InputDuration);
         return File(result.AudioData, result.MimeType);
     }
 }

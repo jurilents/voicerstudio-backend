@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using VoicerStudio.Api.Controllers.Core;
+using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Models;
 using VoicerStudio.Application.Services;
 
@@ -8,17 +9,19 @@ namespace VoicerStudio.Api.Controllers;
 [Route("/v1/speech-info")]
 public class SpeechInfoController : V1Controller
 {
-    private readonly ICognitiveService _cognitiveService;
+    private readonly IEnumerable<ICognitiveService> _cognitiveServices;
 
-    public SpeechInfoController(ICognitiveService cognitiveService)
+    public SpeechInfoController(IEnumerable<ICognitiveService> cognitiveServices)
     {
-        _cognitiveService = cognitiveService;
+        _cognitiveServices = cognitiveServices;
     }
 
 
     [HttpGet("languages")]
-    public async Task<Language[]> Languages([FromCredentialsHeader] string credentials)
+    public async Task<Language[]> Languages(
+        [FromQuery] CognitiveServiceName service, [FromCredentialsHeader] string credentials)
     {
-        return await _cognitiveService.GetLanguagesAsync(credentials);
+        var cognitiveService = _cognitiveServices.First(x => x.ServiceName == service);
+        return await cognitiveService.GetLanguagesAsync(credentials);
     }
 }

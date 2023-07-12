@@ -14,16 +14,16 @@ internal sealed class AzureCredentialsService : ICredentialsService
     private record AzureCredentials(string SubscriptionKey, string Region);
 
     private readonly IEncryptor _encryptor;
-    private readonly CredentialsOptions _credentials;
+    private readonly AzureOptions _azure;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     private HttpContext HttpContext => _httpContextAccessor.HttpContext!;
 
     public AzureCredentialsService(
-        IHttpContextAccessor httpContextAccessor, IEncryptor encryptor, IOptions<CredentialsOptions> credentialsOptionsAccessor)
+        IHttpContextAccessor httpContextAccessor, IEncryptor encryptor, IOptions<AzureOptions> credentialsOptionsAccessor)
     {
         _encryptor = encryptor;
-        _credentials = credentialsOptionsAccessor.Value;
+        _azure = credentialsOptionsAccessor.Value;
         _httpContextAccessor = httpContextAccessor;
     }
 
@@ -33,7 +33,7 @@ internal sealed class AzureCredentialsService : ICredentialsService
         if (IsDefaultUser(cred))
         {
             // Replace model creds with default ones from config
-            cred = new AzureCredentials(_credentials.Azure.SubscriptionKey, _credentials.Azure.Region);
+            cred = new AzureCredentials(_azure.Credentials.SubscriptionKey, _azure.Credentials.Region);
         }
         else if (!await ValidateCredentialsAsync(cred))
             throw new ValidationFailedException("Credentials are invalid");
@@ -45,8 +45,8 @@ internal sealed class AzureCredentialsService : ICredentialsService
 
     private bool IsDefaultUser(AzureCredentials credentials)
     {
-        return credentials.SubscriptionKey == _credentials.User.SubscriptionKey
-            && credentials.Region == _credentials.User.Region;
+        return credentials.SubscriptionKey == _azure.User.SubscriptionKey
+            && credentials.Region == _azure.User.Region;
     }
 
     private static async Task<bool> ValidateCredentialsAsync(AzureCredentials cred)

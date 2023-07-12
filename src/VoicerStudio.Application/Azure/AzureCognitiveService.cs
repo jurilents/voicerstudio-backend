@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NeerCore.Exceptions;
+using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Infrastructure;
 using VoicerStudio.Application.Models;
 using VoicerStudio.Application.Options;
@@ -17,35 +18,38 @@ public class AzureCognitiveService : ICognitiveService
     private const string CacheKey = "azure_langs_";
 
     private readonly ILogger<AzureCognitiveService> _logger;
-    private readonly CredentialsOptions _credentials;
+    private readonly AzureOptions _azure;
     private readonly IMemoryCache _memoryCache;
     private readonly IAudioService _audioService;
 
     public AzureCognitiveService(
-        ILogger<AzureCognitiveService> logger, IOptions<CredentialsOptions> optionsAccessor,
+        ILogger<AzureCognitiveService> logger, IOptions<AzureOptions> optionsAccessor,
         IMemoryCache memoryCache, IAudioService audioService)
     {
         _logger = logger;
         _memoryCache = memoryCache;
         _audioService = audioService;
-        _credentials = optionsAccessor.Value;
+        _azure = optionsAccessor.Value;
     }
 
+
+    public CognitiveServiceName ServiceName => CognitiveServiceName.Azure;
 
     public async Task<Language[]> GetLanguagesAsync(string credentials)
     {
         var languages = await _memoryCache.GetOrCreateAsync(
-            CacheKey + _credentials.Azure.Region,
+            CacheKey + _azure.Credentials.Region,
             async _ => await GetLanguagesInternalAsync());
         return languages!;
     }
 
     public async Task<SpeechGenerateResult> GenerateSpeechAsync(SpeechGenerateRequest request, string credentials)
     {
-        var config = SpeechConfig.FromSubscription(_credentials.Azure.SubscriptionKey, _credentials.Azure.Region);
+        var config = SpeechConfig.FromSubscription(_azure.Credentials.SubscriptionKey, _azure.Credentials.Region);
         config.SpeechSynthesisLanguage = request.Locale;
         config.SpeechSynthesisVoiceName = request.Voice;
-        config.SetSpeechSynthesisOutputFormat(request.Format); //Raw48Khz16BitMonoPcm
+        var synthesisFormat = GetSpeechOutputFormat(request.OutputFormat, request.SampleRate);
+        config.SetSpeechSynthesisOutputFormat(synthesisFormat); //Raw48Khz16BitMonoPcm
 
         using var synthesizer = new SpeechSynthesizer(config, null);
         var ssml = SsmlBuilder.BuildSsml(request);
@@ -62,7 +66,7 @@ public class AzureCognitiveService : ICognitiveService
         {
             AudioData = result.AudioData,
             MimeType = "audio/wav",
-            Duration = result.AudioDuration,
+            OutputDuration = result.AudioDuration,
         };
     }
 
@@ -104,7 +108,7 @@ public class AzureCognitiveService : ICognitiveService
         {
             AudioData = resultFile,
             MimeType = results.First().MimeType,
-            Duration = TimeSpan.FromSeconds(results.Sum(x => x.Duration.TotalSeconds) + offsetsInMilliseconds.Sum()),
+            OutputDuration = TimeSpan.FromSeconds(results.Sum(x => x.OutputDuration.TotalSeconds) + offsetsInMilliseconds.Sum()),
         };
     }
 
@@ -119,7 +123,7 @@ public class AzureCognitiveService : ICognitiveService
 
     private async Task<Language[]> GetLanguagesInternalAsync()
     {
-        var config = SpeechConfig.FromSubscription(_credentials.Azure.SubscriptionKey, _credentials.Azure.Region);
+        var config = SpeechConfig.FromSubscription(_azure.Credentials.SubscriptionKey, _azure.Credentials.Region);
         using var synthesizer = new SpeechSynthesizer(config);
         using var result = await synthesizer.GetVoicesAsync();
 
@@ -148,7 +152,16 @@ public class AzureCognitiveService : ICognitiveService
                         Roles = string.IsNullOrEmpty(roles) ? Array.Empty<string>() : JsonSerializer.Deserialize<string[]>(roles),
                     };
                 }).ToArray()
-            })
-            .ToArray();
+            }).ToArray();
     }
+
+    private static SpeechSynthesisOutputFormat GetSpeechOutputFormat(AudioFormat outputFormat, AudioSampleRate sampleRate) =>
+        (outputFormat, sampleRate) switch
+        {
+            (AudioFormat.Wav, AudioSampleRate.Rate8000)  => SpeechSynthesisOutputFormat.Raw8Khz16BitMonoPcm,
+            (AudioFormat.Wav, AudioSampleRate.Rate16000) => SpeechSynthesisOutputFormat.Raw16Khz16BitMonoPcm,
+            (AudioFormat.Wav, AudioSampleRate.Rate24000) => SpeechSynthesisOutputFormat.Raw24Khz16BitMonoPcm,
+            (AudioFormat.Wav, AudioSampleRate.Rate48000) => SpeechSynthesisOutputFormat.Raw48Khz16BitMonoPcm,
+            _                                            => throw new ValidationFailedException("Invalid output format provided.")
+        };
 }

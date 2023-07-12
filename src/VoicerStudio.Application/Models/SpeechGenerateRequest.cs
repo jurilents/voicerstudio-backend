@@ -1,25 +1,28 @@
 using System.Text.Json.Serialization;
 using FluentValidation;
 using Microsoft.CognitiveServices.Speech;
+using VoicerStudio.Application.Enums;
 
 namespace VoicerStudio.Application.Models;
 
 public class SpeechGenerateRequest
 {
+    public CognitiveServiceName Service { get; set; }
+
     /// <summary>
     /// The language that you want the voice to speak.
     /// </summary>
-    public string Locale { get; set; }
+    public required string Locale { get; set; }
 
     /// <summary>
     /// Voice short name.
     /// </summary>
-    public string Voice { get; set; }
+    public required string Voice { get; set; }
 
     /// <summary>
     /// Text to speech.
     /// </summary>
-    public string Text { get; set; }
+    public required string Text { get; set; }
 
     /// <summary>
     /// The voice-specific speaking style.
@@ -70,7 +73,8 @@ public class SpeechGenerateRequest
 
     [JsonIgnore] public TimeSpan? Duration => End - Start;
 
-    public SpeechSynthesisOutputFormat Format { get; set; } = SpeechSynthesisOutputFormat.Riff48Khz16BitMonoPcm;
+    public required AudioFormat OutputFormat { get; set; }
+    public required AudioSampleRate SampleRate { get; set; }
 }
 
 public class SpeechGenerateRequestValidator : AbstractValidator<SpeechGenerateRequest>

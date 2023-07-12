@@ -4,7 +4,13 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <UserSecretsId>edd68b36-f76e-46ce-894b-df3bb853fcb0</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VoicerStudio.Application\VoicerStudio.Application.csproj" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
@@ -13,13 +19,16 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VoicerStudio.Application\VoicerStudio.Application.csproj" />
+    <Content Update="google-credentials.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="google-credentials">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="lib\*.*" CopyToOutputDirectory="Always" TargetPath="%(Filename)%(Extension)" />
   </ItemGroup>
 
   <PropertyGroup>

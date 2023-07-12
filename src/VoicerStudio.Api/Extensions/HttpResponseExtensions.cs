@@ -23,9 +23,16 @@ public static class HttpResponseExtensions
         await response.WriteJsonAsync(HttpStatusCode.InternalServerError, error);
     }
 
-    public static void AddDurationHeader(this HttpResponse response, TimeSpan duration)
+    public static void AddDurationHeader(this HttpResponse response, TimeSpan outputDuration, TimeSpan? inputDuration = null)
     {
-        response.Headers.Add("X-Duration", (duration.TotalMilliseconds / 1000.0).ToString(CultureInfo.InvariantCulture));
-        response.Headers.Add("Access-Control-Expose-Headers", "X-Duration");
+        if (inputDuration.HasValue)
+        {
+            var baseDuration = (inputDuration.Value.TotalMilliseconds / 1000.0).ToString(CultureInfo.InvariantCulture);
+            response.Headers.Add("X-Base-Duration", baseDuration);
+        }
+
+        var duration = (outputDuration.TotalMilliseconds / 1000.0).ToString(CultureInfo.InvariantCulture);
+        response.Headers.Add("X-Duration", duration);
+        response.Headers.Add("Access-Control-Expose-Headers", "X-Base-Duration,X-Duration");
     }
 }

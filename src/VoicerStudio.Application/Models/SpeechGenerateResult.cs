@@ -2,8 +2,9 @@ namespace VoicerStudio.Application.Models;
 
 public class SpeechGenerateResult
 {
-    public byte[] AudioData { get; set; }
-    public string MimeType { get; set; }
+    public required byte[] AudioData { get; set; }
+    public required string MimeType { get; set; }
     public TimeSpan? Start { get; set; }
-    public TimeSpan Duration { get; set; }
+    public TimeSpan? InputDuration { get; set; }
+    public required TimeSpan OutputDuration { get; set; }
 }
