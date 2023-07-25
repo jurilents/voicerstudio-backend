@@ -1,6 +1,5 @@
 using System.Text.Json.Serialization;
 using FluentValidation;
-using Microsoft.CognitiveServices.Speech;
 using VoicerStudio.Application.Enums;
 
 namespace VoicerStudio.Application.Models;
@@ -8,6 +7,7 @@ namespace VoicerStudio.Application.Models;
 public class SpeechGenerateRequest
 {
     public CognitiveServiceName Service { get; set; }
+    public TimeSpan? BaseDuration { get; set; }
 
     /// <summary>
     /// The language that you want the voice to speak.

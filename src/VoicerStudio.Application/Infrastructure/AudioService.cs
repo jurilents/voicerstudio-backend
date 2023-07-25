@@ -1,11 +1,14 @@
 using FFMpegCore;
+using FFMpegCore.Enums;
 using FFMpegCore.Pipes;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
+using VideoLibrary;
 using VoicerStudio.Application.Extensions;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
+using AudioFormat = VoicerStudio.Application.Enums.AudioFormat;
 
 namespace VoicerStudio.Application.Infrastructure;
 
@@ -55,41 +58,45 @@ internal sealed class AudioService : IAudioService
         }
     }
 
-    public async Task<ResizeResult> ResizeAsync(byte[] audioData, TimeSpan targetDuration)
+    public async Task<ResizeResult> ResizeAsync(byte[] audioData, TimeSpan targetDuration, AudioFormat audioFormat)
     {
         var outputStream = new MemoryStream();
         var inputStream = new MemoryStream(audioData);
 
-        var inputDuration = await GetAudioDurationAsync(inputStream);
+        var inputDuration = GetAudioDuration(inputStream, audioFormat);
 
         try
         {
             if (inputDuration == TimeSpan.Zero)
                 throw new ArgumentException("Audio data is not valid", nameof(audioData));
 
-            inputStream.Position = 0;
-
             var speed = CalcSpeed(inputDuration, targetDuration);
+            inputStream.Position = 0;
 
             var success = await FFMpegArguments
                 .FromPipeInput(new StreamPipeSource(inputStream))
-                .OutputToPipe(new StreamPipeSink(outputStream), options => options
-                    .WithAudioFilters(filter => filter.AddATempo(speed))
-                    .ForceFormat("wav"))
+                .OutputToPipe(new StreamPipeSink(outputStream)
+                    , options => options
+                        .WithAudioFilters(filter => filter.AddATempo(speed))
+                        .WithAudioBitrate(AudioQuality.Ultra)
+                        // .WithDuration(inputDuration)
+                        // .WithAudioCodec("pcm_s16le")
+                        .WithAudioSamplingRate()
+                        // .WithFastStart()
+                        // .WithAudioCodec("pcm_s16le")
+                        .ForceFormat("wav")
+                )
                 .ProcessAsynchronously();
 
             outputStream.Position = 0;
-            var outputFileReader = new WaveFileReader(outputStream);
-            var outputDuration = outputFileReader.TotalTime;
-
-            outputStream.Position = 0;
             var outputFile = outputStream.ToArray();
+            // var outputDuration = GetAudioDuration(new MemoryStream(outputFile));
 
             return new ResizeResult(
                 Success: true,
                 AudioData: outputFile,
                 InputDuration: inputDuration,
-                OutputDuration: outputDuration
+                OutputDuration: inputDuration / speed
             );
         }
         catch (Exception e)
@@ -110,23 +117,39 @@ internal sealed class AudioService : IAudioService
         );
     }
 
-    private static async Task<TimeSpan> GetAudioDurationAsync(Stream stream)
+    public TimeSpan GetAudioDuration(Stream stream)
+    {
+        throw new NotImplementedException();
+    }
+
+    public TimeSpan GetAudioDuration(Stream stream, AudioFormat audioFormat)
     {
         try
         {
-            await using var waveFileReader = new WaveFileReader(stream);
-            return waveFileReader.TotalTime;
+            stream.Position = 0;
+
+            return audioFormat switch
+            {
+                AudioFormat.Mp3 => new Mp3FileReader(stream).TotalTime,
+                AudioFormat.Wav => new WaveFileReader(stream).TotalTime,
+                _ => throw new ArgumentOutOfRangeException(nameof(audioFormat), audioFormat, "Audio format does not supported")
+            };
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            _logger.LogWarning(e, "Cannot read audio duration");
             return TimeSpan.Zero;
+        }
+        finally
+        {
+            stream.Position = 0;
         }
     }
 
     private double CalcSpeed(TimeSpan originalDuration, TimeSpan targetDuration)
     {
         var speed = originalDuration.TotalMilliseconds / targetDuration.TotalMilliseconds;
-        return Math.Clamp(speed, -_options.MaxSpeedDelta, _options.MaxSpeedDelta);
+        return Math.Clamp(speed, 1.0 - _options.MaxPostProcessingSpeedDelta, 1.0 + _options.MaxPostProcessingSpeedDelta);
     }
 
     private static void WriteSilence(WaveFileWriter waveFileWriter, double duration)

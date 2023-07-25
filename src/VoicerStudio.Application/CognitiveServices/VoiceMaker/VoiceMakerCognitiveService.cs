@@ -8,7 +8,7 @@ using VoicerStudio.Application.Models;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
 
-namespace VoicerStudio.Application.VoiceMaker;
+namespace VoicerStudio.Application.CognitiveServices.VoiceMaker;
 
 public class VoiceMakerCognitiveService : ICognitiveService, IDisposable
 {
@@ -42,18 +42,56 @@ public class VoiceMakerCognitiveService : ICognitiveService, IDisposable
         return languages!;
     }
 
+    public async Task<GetDurationResult> GetSpeechDurationAsync(SpeechGenerateRequest request, string credentials)
+    {
+        request.OutputFormat = AudioFormat.Wav;
+        request.Speed = null;
+
+        var originalBytes = await _voiceMakerService.GenerateSpeechAsync(request, credentials);
+        var duration = _audioService.GetAudioDuration(new MemoryStream(originalBytes), request.OutputFormat);
+
+        return new GetDurationResult
+        {
+            BaseDuration = duration.TotalSeconds,
+        };
+    }
+
     public async Task<SpeechGenerateResult> GenerateSpeechAsync(SpeechGenerateRequest request, string credentials)
     {
-        var originalBytes = await _voiceMakerService.GenerateSpeechAsync(request, credentials);
+        if (request.Duration.HasValue)
+        {
+            request.BaseDuration ??= TimeSpan.FromSeconds((await GetSpeechDurationAsync(request, credentials)).BaseDuration);
+            request.Speed = request.BaseDuration.Value == TimeSpan.Zero
+                ? (request.Speed ?? 0)
+                : (request.Duration.Value / request.BaseDuration.Value);
+        }
 
-        var result = request.Duration.HasValue
-            ? await _audioService.ResizeAsync(originalBytes, request.Duration.Value)
-            : throw new ValidationFailedException("Cannot calculate duration of output audio");
+        var originalBytes = await _voiceMakerService.GenerateSpeechAsync(request, credentials);
+        var duration = _audioService.GetAudioDuration(new MemoryStream(originalBytes), request.OutputFormat);
+
+        ResizeResult? result = null;
+        // if (request.Duration.HasValue)
+        // {
+        //     var durationDelta = request.Duration.Value > duration
+        //         ? request.Duration.Value - duration
+        //         : duration - request.Duration.Value;
+        //     if (durationDelta > TimeSpan.FromMilliseconds(333))
+        //     {
+        //         result = await _audioService.ResizeAsync(originalBytes, request.Duration.Value, request.OutputFormat);
+        //         result = result with { InputDuration = request.BaseDuration!.Value };
+        //     }
+        // }
+
+        result ??= new ResizeResult(
+            AudioData: originalBytes,
+            InputDuration: request.BaseDuration ?? (request.Speed is not null and not 0 ? duration / request.Speed.Value : duration),
+            OutputDuration: duration
+        );
 
         return new SpeechGenerateResult
         {
             AudioData = result.AudioData,
-            MimeType = "audio/wav",
+            MimeType = "audio/" + request.OutputFormat.ToString().ToLower(),
             InputDuration = result.InputDuration,
             OutputDuration = result.OutputDuration,
         };
@@ -114,7 +152,6 @@ public class VoiceMakerCognitiveService : ICognitiveService, IDisposable
     public void Dispose()
     {
         _voiceMakerService.Dispose();
-        _memoryCache.Dispose();
         GC.SuppressFinalize(this);
     }
 }

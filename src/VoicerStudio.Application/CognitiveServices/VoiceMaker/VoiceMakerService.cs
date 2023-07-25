@@ -1,21 +1,29 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using NeerCore.Exceptions;
 using VoicerStudio.Application.Infrastructure;
 using VoicerStudio.Application.Models;
+using VoicerStudio.Application.Options;
 
-namespace VoicerStudio.Application.VoiceMaker;
+namespace VoicerStudio.Application.CognitiveServices.VoiceMaker;
 
 public class VoiceMakerService : IDisposable
 {
+    private readonly ILogger<VoiceMakerService> _logger;
     private readonly HttpClient _httpClient;
+    private readonly AudioOptions _options;
 
-    public VoiceMakerService(HttpClient httpClient)
+    public VoiceMakerService(ILogger<VoiceMakerService> logger, HttpClient httpClient, IOptions<AudioOptions> audioOptionsAccessor)
     {
+        _logger = logger;
         _httpClient = httpClient;
+        _options = audioOptionsAccessor.Value;
     }
 
 
@@ -32,6 +40,7 @@ public class VoiceMakerService : IDisposable
 
         return result.Data.VoiceList
             .GroupBy(voice => voice.Language)
+            .OrderBy(voice => voice.Key)
             .Select(voices => new Language
             {
                 Locale = voices.Key,
@@ -44,27 +53,36 @@ public class VoiceMakerService : IDisposable
                     Type = voice.Engine,
                     WordsPerMinute = 150,
                     Styles = voice.VoiceEffects,
-                }).ToArray()
+                }).OrderBy(voice => voice.DisplayName).ToArray()
             }).ToArray();
     }
 
     public async Task<string> GenerateSpeechUrlAsync(SpeechGenerateRequest request, string credentials)
     {
-        // return "https://developer.voicemaker.in/uploads/16891614658327thaybx-voicemaker.in-speech.wav";
         AddAuthorizationHeader(credentials);
+
+        request.Speed = request.Speed.HasValue ? Math.Clamp(request.Speed.Value, 0.5, 1.5) : 1.0;
+        // return "https://developer.voicemaker.in/uploads/16891614658327thaybx-voicemaker.in-speech.wav";
+        // AddAuthorizationHeader(credentials);
+        var masterSpeed = Math.Clamp(1.0 - request.Speed.Value, -_options.MaxServiceSpeedDelta, _options.MaxServiceSpeedDelta) * 100;
+        var masterVolume = request.Volume.HasValue ? (int)Math.Round(request.Volume.Value * 100) : 0;
+        var masterPitch = request.Pitch.HasValue ? (int)Math.Round(request.Pitch.Value * 200) : 0;
+
         var requestJson = JsonSerializer.Serialize(new
         {
-            Engine = "neutral",
+            Engine = "neural",
             VoiceId = request.Voice,
             LanguageCode = request.Locale,
             Text = request.Text,
             OutputFormat = request.OutputFormat.ToString().ToLower(),
             SampleRate = ((int)request.SampleRate).ToString(),
-            Effect = request.Style,
-            MasterSpeed = 0,
-            MasterVolume = request.Volume.HasValue ? (int)Math.Round(request.Volume.Value * 100) : 0,
-            MasterPitch = request.Pitch.HasValue ? (int)Math.Round(request.Pitch.Value * 200) : 0,
+            Effect = string.IsNullOrEmpty(request.Style) ? "default" : request.Style,
+            MasterSpeed = ((int)Math.Round(masterSpeed)).ToString(CultureInfo.InvariantCulture),
+            MasterVolume = masterVolume.ToString(CultureInfo.InvariantCulture),
+            MasterPitch = masterPitch.ToString(CultureInfo.InvariantCulture),
         });
+
+        _logger.LogDebug("VoiceMaker request payload: {@Json}", requestJson);
 
         var content = new StringContent(requestJson, Encoding.UTF8, MediaTypeNames.Application.Json);
         var response = await _httpClient.PostAsync("/voice/api", content);

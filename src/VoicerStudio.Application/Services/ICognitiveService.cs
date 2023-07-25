@@ -7,6 +7,7 @@ public interface ICognitiveService
 {
     CognitiveServiceName ServiceName { get; }
     Task<Language[]> GetLanguagesAsync(string credentials);
+    Task<GetDurationResult> GetSpeechDurationAsync(SpeechGenerateRequest request, string credentials);
     Task<SpeechGenerateResult> GenerateSpeechAsync(SpeechGenerateRequest request, string credentials);
     Task<SpeechGenerateResult> GenerateSpeechAsync(SpeechGenerateRequest[] requests, string credentials);
 }

@@ -1,7 +1,7 @@
 using System.Globalization;
 using FFMpegCore.Arguments;
 
-namespace VoicerStudio.Application.VoiceMaker;
+namespace VoicerStudio.Application.CognitiveServices.VoiceMaker;
 
 public class AtempoAudioFilter : IAudioFilterArgument
 {
@@ -11,6 +11,6 @@ public class AtempoAudioFilter : IAudioFilterArgument
 
     public AtempoAudioFilter(double value)
     {
-        Value = value.ToString(CultureInfo.InvariantCulture);
+        Value = value.ToString("F5", CultureInfo.InvariantCulture);
     }
 }

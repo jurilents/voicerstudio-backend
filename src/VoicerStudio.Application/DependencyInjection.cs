@@ -1,12 +1,12 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using VoicerStudio.Application.Azure;
+using VoicerStudio.Application.CognitiveServices.Azure;
+using VoicerStudio.Application.CognitiveServices.VoiceMaker;
 using VoicerStudio.Application.Infrastructure;
 using VoicerStudio.Application.Infrastructure.Repositories;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Repositories;
 using VoicerStudio.Application.Services;
-using VoicerStudio.Application.VoiceMaker;
 
 namespace VoicerStudio.Application;
 
@@ -25,7 +25,7 @@ public static class DependencyInjection
     {
         services.AddScoped<IEncryptor, AesEncryptor>();
         services.AddScoped<IAudioService, AudioService>();
-        services.AddScoped<ICredentialsService, AzureCredentialsService>();
+        services.AddScoped<ICredentialsService, CredentialsService>();
         services.AddScoped<GoogleSheetsAccessor>();
 
         services.AddScoped<ISpeakerRepository, SpeakerRepository>();
@@ -47,7 +47,6 @@ public static class DependencyInjection
             var options = provider.GetRequiredService<IOptions<VoiceMakerOptions>>().Value;
             httpClient.BaseAddress = new Uri(options.ApiUrl);
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
-            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", "Bearer " + options.ApiKey);
         });
     }
 

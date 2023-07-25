@@ -17,6 +17,14 @@ public class SpeechController : V1Controller
     }
 
 
+    [HttpPost("duration")]
+    public async Task<GetDurationResult> GetDuration(
+        [FromBody] SpeechGenerateRequest request, [FromCredentialsHeader] string credentials)
+    {
+        var service = _cognitiveServices.First(x => x.ServiceName == request.Service);
+        return await service.GetSpeechDurationAsync(request, credentials);
+    }
+
     [HttpPost("single")]
     [Produces("audio/wav")]
     public async Task<IActionResult> GenerateSingle(
@@ -28,7 +36,6 @@ public class SpeechController : V1Controller
         Response.AddDurationHeader(result.OutputDuration, result.InputDuration);
         return File(result.AudioData, result.MimeType);
     }
-
 
     [HttpPost("batch")]
     [Produces("audio/wav")]

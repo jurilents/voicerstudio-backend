@@ -43,4 +43,8 @@
     <Content Include="$(NuGetPackageRoot)\microsoft.cognitiveservices.speech\1.29.0\runtimes\win-x64\native\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CognitiveServices\" />
+  </ItemGroup>
+
 </Project>

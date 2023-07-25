@@ -3,7 +3,7 @@ using System.Text;
 using System.Xml;
 using VoicerStudio.Application.Models;
 
-namespace VoicerStudio.Application.Azure;
+namespace VoicerStudio.Application.CognitiveServices.Azure;
 
 public class SsmlBuilder
 {
@@ -51,7 +51,7 @@ public class SsmlBuilder
                 {
                     xml.WriteStartElement("mstts", "express-as", msttsNamespace);
                     xml.WriteAttributeString("style", request.Style);
-                    xml.WriteAttributeString("styledegree", $"{request.StyleDegree ?? 1f}");
+                    xml.WriteAttributeString("styledegree", $"{(request.StyleDegree ?? 1f).ToString(CultureInfo.InvariantCulture)}");
                     if (!string.IsNullOrEmpty(request.Role)) xml.WriteAttributeString("role", request.Role);
                     {
                         ApplyGlobalProsodies(xml, request);
@@ -70,7 +70,9 @@ public class SsmlBuilder
 
     private static void ApplyGlobalProsodies(XmlWriter xml, SpeechGenerateRequest request)
     {
-        if (!request.Speed.HasValue && !request.Volume.HasValue && !request.Pitch.HasValue)
+        if (request.Speed is null or 0
+            && request.Volume is null or 0
+            && request.Pitch is null or 0)
         {
             xml.WriteString(request.Text);
             return;

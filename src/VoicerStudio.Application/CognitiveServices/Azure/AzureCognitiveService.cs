@@ -11,7 +11,7 @@ using VoicerStudio.Application.Models;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
 
-namespace VoicerStudio.Application.Azure;
+namespace VoicerStudio.Application.CognitiveServices.Azure;
 
 public class AzureCognitiveService : ICognitiveService
 {
@@ -41,6 +41,19 @@ public class AzureCognitiveService : ICognitiveService
             CacheKey + _azure.Credentials.Region,
             async _ => await GetLanguagesInternalAsync());
         return languages!;
+    }
+
+    public async Task<GetDurationResult> GetSpeechDurationAsync(SpeechGenerateRequest request, string credentials)
+    {
+        request.Speed = 0;
+        request.Start = null;
+        request.End = null;
+        // TODO: Use less expensive method here
+        var speech = await GenerateSpeechAsync(request, credentials);
+        return new GetDurationResult
+        {
+            BaseDuration = speech.OutputDuration.TotalSeconds,
+        };
     }
 
     public async Task<SpeechGenerateResult> GenerateSpeechAsync(SpeechGenerateRequest request, string credentials)
@@ -158,10 +171,10 @@ public class AzureCognitiveService : ICognitiveService
     private static SpeechSynthesisOutputFormat GetSpeechOutputFormat(AudioFormat outputFormat, AudioSampleRate sampleRate) =>
         (outputFormat, sampleRate) switch
         {
-            (AudioFormat.Wav, AudioSampleRate.Rate8000)  => SpeechSynthesisOutputFormat.Raw8Khz16BitMonoPcm,
-            (AudioFormat.Wav, AudioSampleRate.Rate16000) => SpeechSynthesisOutputFormat.Raw16Khz16BitMonoPcm,
-            (AudioFormat.Wav, AudioSampleRate.Rate24000) => SpeechSynthesisOutputFormat.Raw24Khz16BitMonoPcm,
-            (AudioFormat.Wav, AudioSampleRate.Rate48000) => SpeechSynthesisOutputFormat.Raw48Khz16BitMonoPcm,
+            (AudioFormat.Wav, AudioSampleRate.Rate8000)  => SpeechSynthesisOutputFormat.Riff8Khz16BitMonoPcm,
+            (AudioFormat.Wav, AudioSampleRate.Rate16000) => SpeechSynthesisOutputFormat.Riff16Khz16BitMonoPcm,
+            (AudioFormat.Wav, AudioSampleRate.Rate24000) => SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm,
+            (AudioFormat.Wav, AudioSampleRate.Rate48000) => SpeechSynthesisOutputFormat.Riff48Khz16BitMonoPcm,
             _                                            => throw new ValidationFailedException("Invalid output format provided.")
         };
 }

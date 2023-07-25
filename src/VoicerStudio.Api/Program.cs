@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Text.Json.Serialization;
 using Serilog;
 using VoicerStudio.Api;
@@ -6,6 +7,11 @@ using VoicerStudio.Api.Middlewares;
 using VoicerStudio.Application;
 
 Log.Logger = AppLoggerFactory.CreateLogger();
+var culture = CultureInfo.InvariantCulture;
+CultureInfo.CurrentCulture = culture;
+CultureInfo.CurrentUICulture = culture;
+Thread.CurrentThread.CurrentCulture = culture;
+Thread.CurrentThread.CurrentUICulture = culture;
 
 try
 {

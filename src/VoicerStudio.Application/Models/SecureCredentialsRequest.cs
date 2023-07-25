@@ -22,5 +22,12 @@ public class SecureCredentialsRequestValidator : AbstractValidator<SecureCredent
                     data.ContainsKey("SubscriptionKey") && data.ContainsKey("Region"))
                 .WithMessage("Data properties are required for Azure service: 'SubscriptionKey' and 'Region'");
         });
+
+        When(o => o.Service == CognitiveServiceName.VoiceMaker, () =>
+        {
+            RuleFor(o => o.Data).Must(data =>
+                    data.ContainsKey("ApiKey"))
+                .WithMessage("Data properties are required for VoiceMaker service: 'ApiKey'");
+        });
     }
 }

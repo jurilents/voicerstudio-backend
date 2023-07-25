@@ -1,6 +1,6 @@
 using System.Text.Json.Serialization;
 
-namespace VoicerStudio.Application.VoiceMaker;
+namespace VoicerStudio.Application.CognitiveServices.VoiceMaker;
 
 public class VoiceMakerVoicesResponse
 {
