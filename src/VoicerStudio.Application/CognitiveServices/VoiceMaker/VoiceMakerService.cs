@@ -7,8 +7,10 @@ using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NeerCore.Exceptions;
+using VoicerStudio.Application.CognitiveServices.VoiceMaker.Models;
 using VoicerStudio.Application.Infrastructure;
 using VoicerStudio.Application.Models;
+using VoicerStudio.Application.Models.Speech;
 using VoicerStudio.Application.Options;
 
 namespace VoicerStudio.Application.CognitiveServices.VoiceMaker;

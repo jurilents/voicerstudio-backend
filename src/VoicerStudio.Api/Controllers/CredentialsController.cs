@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using VoicerStudio.Api.Controllers.Core;
-using VoicerStudio.Application.Models;
+using VoicerStudio.Application.CognitiveServices;
+using VoicerStudio.Application.Models.Speech;
 using VoicerStudio.Application.Services;
 
 namespace VoicerStudio.Api.Controllers;
@@ -8,17 +9,18 @@ namespace VoicerStudio.Api.Controllers;
 [Route("/v1/credentials")]
 public class CredentialsController : V1Controller
 {
-    private readonly ICredentialsService _credentialsService;
+    private readonly CredentialsServicesProvider _credentialsServices;
 
-    public CredentialsController(ICredentialsService credentialsService)
+    public CredentialsController(CredentialsServicesProvider credentialsServices)
     {
-        _credentialsService = credentialsService;
+        _credentialsServices = credentialsServices;
     }
 
 
     [HttpPost("secure")]
     public async Task<SecureCredentialsResult> Secure([FromBody] SecureCredentialsRequest request)
     {
-        return await _credentialsService.SecureAsync(request);
+        var credentialsService = _credentialsServices.GetService(request.Service);
+        return await credentialsService.SecureAsync(request);
     }
 }

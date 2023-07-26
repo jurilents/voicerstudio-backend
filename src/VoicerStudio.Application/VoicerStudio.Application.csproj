@@ -7,17 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="FFmpeg.AutoGen" Version="6.0.0.2" />
-    <PackageReference Include="FFMpegCore" Version="5.1.0" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
     <PackageReference Include="Google.Apis.Sheets.v4" Version="1.60.0.3071" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.29.0" />
     <PackageReference Include="NAudio" Version="2.1.0" />
     <PackageReference Include="NAudio.Lame" Version="2.1.0" />
     <PackageReference Include="NeerCore" Version="2.0.1" />
+    <PackageReference Include="SoundTouch.Net" Version="2.3.2" />
     <PackageReference Include="Teva.Common.Cultures" Version="1.0.2" />
-    <PackageReference Include="VideoLibrary" Version="3.2.3" />
-    <PackageReference Include="Xabe.FFmpeg" Version="5.2.6" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,10 +38,6 @@
   <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
     <Content Include="$(NuGetPackageRoot)\microsoft.cognitiveservices.speech\1.29.0\runtimes\win-x64\native\Microsoft.CognitiveServices.Speech.core.dll" />
     <Content Include="$(NuGetPackageRoot)\microsoft.cognitiveservices.speech\1.29.0\runtimes\win-x64\native\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="CognitiveServices\" />
   </ItemGroup>
 
 </Project>

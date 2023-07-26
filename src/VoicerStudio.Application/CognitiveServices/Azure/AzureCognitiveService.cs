@@ -8,6 +8,7 @@ using NeerCore.Exceptions;
 using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Infrastructure;
 using VoicerStudio.Application.Models;
+using VoicerStudio.Application.Models.Speech;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
 
@@ -43,19 +44,6 @@ public class AzureCognitiveService : ICognitiveService
         return languages!;
     }
 
-    public async Task<GetDurationResult> GetSpeechDurationAsync(SpeechGenerateRequest request, string credentials)
-    {
-        request.Speed = 0;
-        request.Start = null;
-        request.End = null;
-        // TODO: Use less expensive method here
-        var speech = await GenerateSpeechAsync(request, credentials);
-        return new GetDurationResult
-        {
-            BaseDuration = speech.OutputDuration.TotalSeconds,
-        };
-    }
-
     public async Task<SpeechGenerateResult> GenerateSpeechAsync(SpeechGenerateRequest request, string credentials)
     {
         var config = SpeechConfig.FromSubscription(_azure.Credentials.SubscriptionKey, _azure.Credentials.Region);
@@ -77,8 +65,8 @@ public class AzureCognitiveService : ICognitiveService
 
         return new SpeechGenerateResult
         {
-            AudioData = result.AudioData,
-            MimeType = "audio/wav",
+            AudioData = new MemoryStream(result.AudioData),
+            MimeType = "audio/" + request.OutputFormat.ToString().ToLower(),
             OutputDuration = result.AudioDuration,
         };
     }
@@ -171,10 +159,13 @@ public class AzureCognitiveService : ICognitiveService
     private static SpeechSynthesisOutputFormat GetSpeechOutputFormat(AudioFormat outputFormat, AudioSampleRate sampleRate) =>
         (outputFormat, sampleRate) switch
         {
-            (AudioFormat.Wav, AudioSampleRate.Rate8000)  => SpeechSynthesisOutputFormat.Riff8Khz16BitMonoPcm,
+            // (AudioFormat.Wav, AudioSampleRate.Rate8000)  => SpeechSynthesisOutputFormat.Riff8Khz16BitMonoPcm,
             (AudioFormat.Wav, AudioSampleRate.Rate16000) => SpeechSynthesisOutputFormat.Riff16Khz16BitMonoPcm,
             (AudioFormat.Wav, AudioSampleRate.Rate24000) => SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm,
             (AudioFormat.Wav, AudioSampleRate.Rate48000) => SpeechSynthesisOutputFormat.Riff48Khz16BitMonoPcm,
-            _                                            => throw new ValidationFailedException("Invalid output format provided.")
+            (AudioFormat.Mp3, AudioSampleRate.Rate16000) => SpeechSynthesisOutputFormat.Audio16Khz128KBitRateMonoMp3,
+            (AudioFormat.Mp3, AudioSampleRate.Rate24000) => SpeechSynthesisOutputFormat.Audio24Khz160KBitRateMonoMp3,
+            (AudioFormat.Mp3, AudioSampleRate.Rate48000) => SpeechSynthesisOutputFormat.Audio48Khz192KBitRateMonoMp3,
+            _                                            => throw new ValidationFailedException("Invalid output format provided")
         };
 }

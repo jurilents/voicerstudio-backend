@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text;
 using System.Xml;
-using VoicerStudio.Application.Models;
+using VoicerStudio.Application.Models.Speech;
 
 namespace VoicerStudio.Application.CognitiveServices.Azure;
 

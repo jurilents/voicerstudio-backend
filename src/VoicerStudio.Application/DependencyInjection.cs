@@ -1,5 +1,9 @@
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using VoicerStudio.Application.Audio;
+using VoicerStudio.Application.Audio.Mp3;
+using VoicerStudio.Application.Audio.Wav;
+using VoicerStudio.Application.CognitiveServices;
 using VoicerStudio.Application.CognitiveServices.Azure;
 using VoicerStudio.Application.CognitiveServices.VoiceMaker;
 using VoicerStudio.Application.Infrastructure;
@@ -17,15 +21,21 @@ public static class DependencyInjection
         services.AddMemoryCache();
         services.AddAllOptions();
         services.AddInfrastructure();
+
         services.AddAzureCognitiveService();
         services.AddVoiceMakerCognitiveService();
+        services.AddScoped<CredentialsServicesProvider>();
+        services.AddScoped<CognitiveServicesProvider>();
     }
 
     private static void AddInfrastructure(this IServiceCollection services)
     {
         services.AddScoped<IEncryptor, AesEncryptor>();
-        services.AddScoped<IAudioService, AudioService>();
-        services.AddScoped<ICredentialsService, CredentialsService>();
+
+        services.AddScoped<IAudioService, WavAudioService>();
+        services.AddScoped<IAudioService, Mp3AudioService>();
+        services.AddScoped<AudioServiceProvider>();
+
         services.AddScoped<GoogleSheetsAccessor>();
 
         services.AddScoped<ISpeakerRepository, SpeakerRepository>();
@@ -35,13 +45,15 @@ public static class DependencyInjection
     private static void AddAzureCognitiveService(this IServiceCollection services)
     {
         services.AddScoped<ICognitiveService, AzureCognitiveService>();
+        services.AddScoped<ICredentialsService, AzureCredentialsService>();
     }
 
 
     private static void AddVoiceMakerCognitiveService(this IServiceCollection services)
     {
-        services.AddScoped<ICognitiveService, VoiceMakerCognitiveService>();
+        // services.AddScoped<ICognitiveService, VoiceMakerCognitiveService>();
         services.AddScoped<VoiceMakerService>();
+        services.AddScoped<ICredentialsService, VoiceMakerCredentialsService>();
         services.AddHttpClient<VoiceMakerService>((provider, httpClient) =>
         {
             var options = provider.GetRequiredService<IOptions<VoiceMakerOptions>>().Value;

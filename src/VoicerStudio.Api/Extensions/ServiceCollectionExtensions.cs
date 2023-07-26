@@ -3,7 +3,7 @@ using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using VoicerStudio.Application.Models;
+using VoicerStudio.Application.Models.Speech;
 
 namespace VoicerStudio.Api.Extensions;
 
