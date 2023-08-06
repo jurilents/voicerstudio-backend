@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.CognitiveServices.Speech;
 using Microsoft.Extensions.Options;
 using NeerCore.Exceptions;
+using NeerCore.Json;
 using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Models.Speech;
 using VoicerStudio.Application.Options;
@@ -12,6 +13,8 @@ namespace VoicerStudio.Application.CognitiveServices.Azure;
 internal class AzureCredentialsService : ICredentialsService
 {
     private record AzureCredentials(string SubscriptionKey, string Region);
+
+    private const string Prefix = "AZURE_";
 
     private readonly IEncryptor _encryptor;
     private readonly AzureOptions _azure;
@@ -36,10 +39,28 @@ internal class AzureCredentialsService : ICredentialsService
         else if (!await ValidateAzureCredentialsAsync(cred))
             throw new ValidationFailedException("Credentials are invalid");
 
-        var jsonString = "AZURE_" + JsonSerializer.Serialize(cred);
+        var jsonString = Prefix + JsonSerializer.Serialize(cred, JsonConventions.CamelCase);
         var encryptedCredentials = _encryptor.Encrypt(jsonString);
 
         return new SecureCredentialsResult(Credentials: encryptedCredentials);
+    }
+
+    public Task<IReadOnlyDictionary<string, string>> UnsecureAsync(string credentials)
+    {
+        if (string.IsNullOrEmpty(credentials))
+            throw new ValidationFailedException("Credentials are invalid");
+
+        try
+        {
+            var decryptedCredentials = _encryptor.Decrypt(credentials)[Prefix.Length..];
+            var cred = JsonSerializer.Deserialize<Dictionary<string, string>>(decryptedCredentials)!;
+
+            return Task.FromResult<IReadOnlyDictionary<string, string>>(cred);
+        }
+        catch
+        {
+            throw new ValidationFailedException("Credentials are invalid");
+        }
     }
 
 

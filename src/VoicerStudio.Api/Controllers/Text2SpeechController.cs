@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
+using NeerCore.Exceptions;
 using VoicerStudio.Api.Controllers.Core;
 using VoicerStudio.Api.Extensions;
 using VoicerStudio.Application.CognitiveServices;
 using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Models;
 using VoicerStudio.Application.Models.Speech;
-using VoicerStudio.Application.Services;
 
 namespace VoicerStudio.Api.Controllers;
 

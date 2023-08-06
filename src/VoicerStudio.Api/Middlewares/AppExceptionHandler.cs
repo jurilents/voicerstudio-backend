@@ -24,7 +24,7 @@ internal sealed class AppExceptionHandler : IMiddleware
         catch (ValidationException ex)
         {
             await context.Response.WriteJsonAsync(HttpStatusCode.BadRequest, ex.CreateFluentValidationError());
-            await ProcessCommonExceptionAsync(context, ex);
+            // await ProcessCommonExceptionAsync(context, ex);
         }
         catch (HttpException ex)
         {
@@ -33,7 +33,10 @@ internal sealed class AppExceptionHandler : IMiddleware
                 _logger.LogError(ex, "Internal Server Error");
                 await context.Response.Write500ErrorAsync(ex, true);
             }
-            await context.Response.WriteJsonAsync(ex.StatusCode, ex.CreateError());
+            else
+            {
+                await context.Response.WriteJsonAsync(ex.StatusCode, ex.CreateError());
+            }
         }
         catch (TaskCanceledException)
         {

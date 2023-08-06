@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using NeerCore.Exceptions;
+using NeerCore.Json;
 using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Models.Speech;
 using VoicerStudio.Application.Options;
@@ -12,6 +13,7 @@ internal class VoiceMakerCredentialsService : ICredentialsService
 {
     private record VoiceMakerCredentials(string ApiKey);
 
+    private const string Prefix = "VMAKER_";
 
     private readonly IEncryptor _encryptor;
     private readonly VoiceMakerOptions _options;
@@ -36,10 +38,28 @@ internal class VoiceMakerCredentialsService : ICredentialsService
         else if (!await ValidateVoiceMakerCredentialsAsync(cred))
             throw new ValidationFailedException("Credentials are invalid");
 
-        var jsonString = "VMAKER_" + JsonSerializer.Serialize(cred);
+        var jsonString = Prefix + JsonSerializer.Serialize(cred, JsonConventions.CamelCase);
         var encryptedCredentials = _encryptor.Encrypt(jsonString);
 
         return new SecureCredentialsResult(Credentials: encryptedCredentials);
+    }
+
+    public Task<IReadOnlyDictionary<string, string>> UnsecureAsync(string credentials)
+    {
+        if (string.IsNullOrEmpty(credentials))
+            throw new ValidationFailedException("Credentials are invalid");
+
+        try
+        {
+            var decryptedCredentials = _encryptor.Decrypt(credentials)[Prefix.Length..];
+            var cred = JsonSerializer.Deserialize<Dictionary<string, string>>(decryptedCredentials)!;
+
+            return Task.FromResult<IReadOnlyDictionary<string, string>>(cred);
+        }
+        catch
+        {
+            throw new ValidationFailedException("Credentials are invalid");
+        }
     }
 
     private static async Task<bool> ValidateVoiceMakerCredentialsAsync(VoiceMakerCredentials cred)

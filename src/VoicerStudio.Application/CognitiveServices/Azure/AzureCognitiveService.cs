@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NeerCore.Exceptions;
+using VoicerStudio.Application.Audio;
 using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Infrastructure;
 using VoicerStudio.Application.Models;
@@ -18,35 +19,40 @@ public class AzureCognitiveService : ICognitiveService
 {
     private const string CacheKey = "azure_langs_";
 
-    private readonly ILogger<AzureCognitiveService> _logger;
     private readonly AzureOptions _azure;
     private readonly IMemoryCache _memoryCache;
-    private readonly IAudioService _audioService;
+    private readonly AudioServiceProvider _audioServices;
+    private readonly ILogger<AzureCognitiveService> _logger;
+    private readonly CredentialsServicesProvider _credentialsServices;
 
     public AzureCognitiveService(
         ILogger<AzureCognitiveService> logger, IOptions<AzureOptions> optionsAccessor,
-        IMemoryCache memoryCache, IAudioService audioService)
+        IMemoryCache memoryCache, CredentialsServicesProvider credentialsServices, AudioServiceProvider audioServices)
     {
         _logger = logger;
         _memoryCache = memoryCache;
-        _audioService = audioService;
         _azure = optionsAccessor.Value;
+        _credentialsServices = credentialsServices;
+        _audioServices = audioServices;
     }
 
 
     public CognitiveServiceName ServiceName => CognitiveServiceName.Azure;
 
+    private ICredentialsService CredentialsService => _credentialsServices.GetService(ServiceName);
+
     public async Task<Language[]> GetLanguagesAsync(string credentials)
     {
         var languages = await _memoryCache.GetOrCreateAsync(
             CacheKey + _azure.Credentials.Region,
-            async _ => await GetLanguagesInternalAsync());
+            async _ => await GetLanguagesInternalAsync(credentials));
         return languages!;
     }
 
     public async Task<SpeechGenerateResult> GenerateSpeechAsync(SpeechGenerateRequest request, string credentials)
     {
-        var config = SpeechConfig.FromSubscription(_azure.Credentials.SubscriptionKey, _azure.Credentials.Region);
+        var cred = await CredentialsService.UnsecureAsync(credentials);
+        var config = SpeechConfig.FromSubscription(cred["subscriptionKey"], cred["region"]);
         config.SpeechSynthesisLanguage = request.Locale;
         config.SpeechSynthesisVoiceName = request.Voice;
         var synthesisFormat = GetSpeechOutputFormat(request.OutputFormat, request.SampleRate);
@@ -67,6 +73,7 @@ public class AzureCognitiveService : ICognitiveService
         {
             AudioData = new MemoryStream(result.AudioData),
             MimeType = "audio/" + request.OutputFormat.ToString().ToLower(),
+            InputDuration = request.Speed == 0 ? result.AudioDuration : null,
             OutputDuration = result.AudioDuration,
         };
     }
@@ -103,7 +110,9 @@ public class AzureCognitiveService : ICognitiveService
         }
 
         // Merge all audio files with offsets
-        var resultFile = await _audioService.MergeAsync(audioFiles, offsetsInMilliseconds);
+        var audioFormat = requests.First().OutputFormat;
+        var audioService = _audioServices.GetService(audioFormat);
+        var resultFile = await audioService.MergeAsync(audioFiles, offsetsInMilliseconds);
 
         return new SpeechGenerateResult
         {
@@ -122,9 +131,10 @@ public class AzureCognitiveService : ICognitiveService
         return overlaps.Count == 0;
     }
 
-    private async Task<Language[]> GetLanguagesInternalAsync()
+    private async Task<Language[]> GetLanguagesInternalAsync(string credentials)
     {
-        var config = SpeechConfig.FromSubscription(_azure.Credentials.SubscriptionKey, _azure.Credentials.Region);
+        var cred = await CredentialsService.UnsecureAsync(credentials);
+        var config = SpeechConfig.FromSubscription(cred["subscriptionKey"], cred["region"]);
         using var synthesizer = new SpeechSynthesizer(config);
         using var result = await synthesizer.GetVoicesAsync();
 

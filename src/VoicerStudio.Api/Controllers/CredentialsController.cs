@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using VoicerStudio.Api.Controllers.Core;
 using VoicerStudio.Application.CognitiveServices;
 using VoicerStudio.Application.Models.Speech;
-using VoicerStudio.Application.Services;
 
 namespace VoicerStudio.Api.Controllers;
 

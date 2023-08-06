@@ -1,6 +1,4 @@
-using System.Text.Json.Serialization;
 using FluentValidation;
-using NeerCore.Exceptions;
 using VoicerStudio.Application.Enums;
 
 namespace VoicerStudio.Application.Models.Speech;

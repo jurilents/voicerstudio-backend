@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
+using NeerCore.Exceptions;
 using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
@@ -26,7 +27,7 @@ internal class WavAudioService : IAudioService
         var buffer = new byte[4096]; // 1024 * 4
         WaveFileWriter? waveFileWriter = null;
 
-        using var output = new MemoryStream();
+        var output = new MemoryStream();
         try
         {
             for (var i = 0; i < audioFiles.Length; i++)
@@ -51,7 +52,7 @@ internal class WavAudioService : IAudioService
         finally
         {
             // ReSharper disable once MethodHasAsyncOverload
-            waveFileWriter?.Dispose();
+            // waveFileWriter?.Dispose();
         }
     }
 

@@ -7,11 +7,11 @@ using VoicerStudio.Api.Middlewares;
 using VoicerStudio.Application;
 
 Log.Logger = AppLoggerFactory.CreateLogger();
-var culture = CultureInfo.InvariantCulture;
+var culture = new CultureInfo("en-US");
 CultureInfo.CurrentCulture = culture;
 CultureInfo.CurrentUICulture = culture;
-Thread.CurrentThread.CurrentCulture = culture;
-Thread.CurrentThread.CurrentUICulture = culture;
+CultureInfo.DefaultThreadCurrentCulture = culture;
+CultureInfo.DefaultThreadCurrentUICulture = culture;
 
 try
 {
