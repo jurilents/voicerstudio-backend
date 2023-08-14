@@ -95,6 +95,6 @@ public class SsmlBuilder
     private static string DeltaToPercents(double? num)
     {
         var percents = (num!.Value * 100.0).ToString(CultureInfo.InvariantCulture);
-        return num >= 0 ? $"+{percents}%" : $"{percents}%";
+        return num > 0 ? $"+{percents}%" : $"{percents}%";
     }
 }
