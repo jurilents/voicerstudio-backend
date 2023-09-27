@@ -10,6 +10,7 @@ public class AzureCredentialsOptions
 {
     public string SubscriptionKey { get; init; } = null!;
     public string Region { get; init; } = null!;
+    public string[]? ApiKeys { get; init; }
 
 
     public static bool operator ==(AzureCredentialsOptions? a, AzureCredentialsOptions? b) =>

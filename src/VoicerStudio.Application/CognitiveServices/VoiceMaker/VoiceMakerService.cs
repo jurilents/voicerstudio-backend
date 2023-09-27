@@ -29,7 +29,7 @@ public class VoiceMakerService : IDisposable
     }
 
 
-    public async Task<Language[]> GetLanguagesAsync(string credentials)
+    public async Task<LanguageWithVoices[]> GetLanguagesAsync(string credentials)
     {
         AddAuthorizationHeader(credentials);
         var response = await _httpClient.PostAsync("/voice/list", new StringContent(""));
@@ -43,7 +43,7 @@ public class VoiceMakerService : IDisposable
         return result.Data.VoiceList
             .GroupBy(voice => voice.Language)
             .OrderBy(voice => voice.Key)
-            .Select(voices => new Language
+            .Select(voices => new LanguageWithVoices
             {
                 Locale = voices.Key,
                 DisplayName = CultureNormalizer.GetCultureDisplayName(voices.Key),

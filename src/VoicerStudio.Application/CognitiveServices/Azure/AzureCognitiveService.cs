@@ -41,10 +41,10 @@ public class AzureCognitiveService : ICognitiveService
 
     private ICredentialsService CredentialsService => _credentialsServices.GetService(ServiceName);
 
-    public async Task<Language[]> GetLanguagesAsync(string credentials)
+    public async Task<LanguageWithVoices[]> GetLanguagesAsync(string credentials)
     {
         var languages = await _memoryCache.GetOrCreateAsync(
-            CacheKey + _azure.Credentials.Region,
+            CacheKey + _azure.Credentials.Region + credentials,
             async _ => await GetLanguagesInternalAsync(credentials));
         return languages!;
     }
@@ -131,7 +131,7 @@ public class AzureCognitiveService : ICognitiveService
         return overlaps.Count == 0;
     }
 
-    private async Task<Language[]> GetLanguagesInternalAsync(string credentials)
+    private async Task<LanguageWithVoices[]> GetLanguagesInternalAsync(string credentials)
     {
         var cred = await CredentialsService.UnsecureAsync(credentials);
         var config = SpeechConfig.FromSubscription(cred["subscriptionKey"], cred["region"]);
@@ -140,10 +140,17 @@ public class AzureCognitiveService : ICognitiveService
 
         if (result.Reason == ResultReason.VoicesListRetrieved)
             _logger.LogInformation("Found {Count} voices", result.Voices.Count);
+        else if (result.Voices.Count == 0)
+        {
+            var message = $"Voices did not fetch due to an error: {result.Reason}";
+            _logger.LogError(message);
+            throw new InternalServerException(message);
+        }
 
         return result.Voices
             .GroupBy(voice => voice.Locale)
-            .Select(voices => new Language
+            .OrderBy(group => group.Key)
+            .Select(voices => new LanguageWithVoices
             {
                 Locale = voices.Key,
                 DisplayName = CultureNormalizer.GetCultureDisplayName(voices.Key),

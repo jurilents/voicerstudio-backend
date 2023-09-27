@@ -50,6 +50,15 @@ internal class AzureCredentialsService : ICredentialsService
         if (string.IsNullOrEmpty(credentials))
             throw new ValidationFailedException("Credentials are invalid");
 
+        if (_azure.User.ApiKeys is not null && _azure.User.ApiKeys.Contains(credentials))
+        {
+            return Task.FromResult<IReadOnlyDictionary<string, string>>(new Dictionary<string, string>
+            {
+                ["subscriptionKey"] = _azure.Credentials.SubscriptionKey,
+                ["region"] = _azure.Credentials.Region,
+            });
+        }
+
         try
         {
             var decryptedCredentials = _encryptor.Decrypt(credentials)[Prefix.Length..];

@@ -21,7 +21,7 @@ public class Text2SpeechController : V1Controller
 
 
     [HttpGet("languages")]
-    public async Task<Language[]> Languages(
+    public async Task<LanguageWithVoices[]> Languages(
         [FromQuery] CognitiveServiceName service, [FromCredentialsHeader] string credentials)
     {
         var cognitiveService = _cognitiveServices.GetService(service);

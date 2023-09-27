@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
         services.AddCors(options => options
             .AddPolicy("Default", cors => cors
                 .WithOrigins(origins)
-                .WithHeaders("Content-Type", "X-Credentials", "X-Duration")
+                .WithHeaders("Content-Type", "X-Credentials", "X-Duration", "Sec-Ch-Ua", "Sec-Ch-Ua-Mobile", "Sec-Ch-Ua-Platform")
                 .AllowAnyMethod()
                 .AllowCredentials()));
     }

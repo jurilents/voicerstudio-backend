@@ -1,3 +1,5 @@
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using VoicerStudio.Application.Audio;
@@ -24,6 +26,7 @@ public static class DependencyInjection
 
         services.AddAzureCognitiveService();
         services.AddVoiceMakerCognitiveService();
+        services.AddConferenceTranslationsApi();
         services.AddScoped<CredentialsServicesProvider>();
         services.AddScoped<CognitiveServicesProvider>();
     }
@@ -38,8 +41,12 @@ public static class DependencyInjection
 
         services.AddScoped<GoogleSheetsAccessor>();
 
+        services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<ISpeakerRepository, SpeakerRepository>();
         services.AddScoped<ISubtitleRepository, SubtitleRepository>();
+
+        services.AddScoped<ITranslationDocsParser, TranslationDocsParser>();
+        services.AddScoped<ITranslateService, DeeplTranslateService>();
     }
 
     private static void AddAzureCognitiveService(this IServiceCollection services)
@@ -62,11 +69,46 @@ public static class DependencyInjection
         });
     }
 
+    private static void AddConferenceTranslationsApi(this IServiceCollection services)
+    {
+        // ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+        // System.Net.ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls11 | SecurityProtocolType.Tls;
+        // services.AddScoped<IConferenceTranslationsService, ConferenceTranslationsService>();
+        services.AddHttpClient<IConferenceTranslationsService, ConferenceTranslationsService>((provider, httpClient) =>
+        {
+            var options = provider.GetRequiredService<IOptions<ConferenceTranslationsOptions>>().Value;
+            httpClient.BaseAddress = new Uri(options.ApiUrl);
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept", "*/*");
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Accept-Encoding", "gzip, deflate, br");
+            httpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent",
+                "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36");
+        }).ConfigurePrimaryHttpMessageHandler(_ => new HttpClientHandler
+        {
+            SslProtocols = SslProtocols.Tls | SslProtocols.Tls11 | SslProtocols.Tls12 | SslProtocols.Tls13,
+            ClientCertificates =
+            {
+                GetMyX509Certificate()
+            },
+            ClientCertificateOptions = ClientCertificateOption.Manual,
+            ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true,
+        });
+    }
+
+    private static X509Certificate2 GetMyX509Certificate()
+    {
+        var certPath = Path.Join(AppDomain.CurrentDomain.BaseDirectory, "ssl/certificate.pem");
+        using var cert = X509Certificate.CreateFromCertFile(certPath);
+        return new X509Certificate2(cert);
+    }
+
     private static void AddAllOptions(this IServiceCollection services)
     {
         services.AddOptions<AudioOptions>().BindConfiguration("Audio");
         services.AddOptions<AzureOptions>().BindConfiguration("Azure");
-        services.AddOptions<VoiceMakerOptions>().BindConfiguration("VoiceMaker");
+        services.AddOptions<ConferenceTranslationsOptions>().BindConfiguration("ConferenceTranslations");
+        services.AddOptions<DeeplOptions>().BindConfiguration("Deepl");
         services.AddOptions<GoogleOptions>().BindConfiguration("Google");
+        services.AddOptions<MongoOptions>().BindConfiguration("Mongo");
+        services.AddOptions<VoiceMakerOptions>().BindConfiguration("VoiceMaker");
     }
 }

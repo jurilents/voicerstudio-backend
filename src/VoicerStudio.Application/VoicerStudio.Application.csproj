@@ -7,9 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DeepL.net" Version="1.7.1" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Google.Apis.Discovery.v1" Version="1.62.0" />
+    <PackageReference Include="Google.Apis.Docs.v1" Version="1.62.0.2979" />
+    <PackageReference Include="Google.Apis.Drive.v3" Version="1.62.0.3155" />
     <PackageReference Include="Google.Apis.Sheets.v4" Version="1.60.0.3071" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.29.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
     <PackageReference Include="NAudio" Version="2.1.0" />
     <PackageReference Include="NAudio.Lame" Version="2.1.0" />
     <PackageReference Include="NeerCore" Version="2.0.1" />
@@ -39,5 +44,7 @@
     <Content Include="$(NuGetPackageRoot)\microsoft.cognitiveservices.speech\1.29.0\runtimes\win-x64\native\Microsoft.CognitiveServices.Speech.core.dll" />
     <Content Include="$(NuGetPackageRoot)\microsoft.cognitiveservices.speech\1.29.0\runtimes\win-x64\native\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
   </ItemGroup>
+
+
 
 </Project>

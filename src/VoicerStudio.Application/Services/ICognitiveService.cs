@@ -7,7 +7,7 @@ namespace VoicerStudio.Application.Services;
 public interface ICognitiveService
 {
     CognitiveServiceName ServiceName { get; }
-    Task<Language[]> GetLanguagesAsync(string credentials);
+    Task<LanguageWithVoices[]> GetLanguagesAsync(string credentials);
     Task<SpeechGenerateResult> GenerateSpeechAsync(SpeechGenerateRequest request, string credentials);
     Task<SpeechGenerateResult> GenerateSpeechAsync(SpeechGenerateRequest[] requests, string credentials);
 }
