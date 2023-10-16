@@ -39,8 +39,8 @@ internal class AzureCredentialsService : ICredentialsService
         else if (!await ValidateAzureCredentialsAsync(cred))
             throw new ValidationFailedException("Credentials are invalid");
 
-        var jsonString = Prefix + JsonSerializer.Serialize(cred, JsonConventions.CamelCase);
-        var encryptedCredentials = _encryptor.Encrypt(jsonString);
+        var jsonString = JsonSerializer.Serialize(cred, JsonConventions.CamelCase);
+        var encryptedCredentials = Prefix + _encryptor.Encrypt(jsonString);
 
         return new SecureCredentialsResult(Credentials: encryptedCredentials);
     }
