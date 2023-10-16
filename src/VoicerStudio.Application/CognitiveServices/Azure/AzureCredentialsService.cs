@@ -40,7 +40,7 @@ internal class AzureCredentialsService : ICredentialsService
             throw new ValidationFailedException("Credentials are invalid");
 
         var jsonString = JsonSerializer.Serialize(cred, JsonConventions.CamelCase);
-        var encryptedCredentials = Prefix + _encryptor.Encrypt(jsonString);
+        var encryptedCredentials = _encryptor.Encrypt(jsonString);
 
         return new SecureCredentialsResult(Credentials: encryptedCredentials);
     }
@@ -61,7 +61,7 @@ internal class AzureCredentialsService : ICredentialsService
 
         try
         {
-            var decryptedCredentials = _encryptor.Decrypt(credentials)[Prefix.Length..];
+            var decryptedCredentials = _encryptor.Decrypt(credentials);
             var cred = JsonSerializer.Deserialize<Dictionary<string, string>>(decryptedCredentials)!;
 
             return Task.FromResult<IReadOnlyDictionary<string, string>>(cred);
