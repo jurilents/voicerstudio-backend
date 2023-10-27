@@ -41,7 +41,7 @@ public static class DependencyInjection
 
         services.AddScoped<GoogleSheetsAccessor>();
 
-        services.AddScoped<IEventRepository, EventRepository>();
+        // services.AddScoped<IEventRepository, EventRepository>();
         services.AddScoped<ISpeakerRepository, SpeakerRepository>();
         services.AddScoped<ISubtitleRepository, SubtitleRepository>();
 
@@ -109,6 +109,7 @@ public static class DependencyInjection
         services.AddOptions<DeeplOptions>().BindConfiguration("Deepl");
         services.AddOptions<GoogleOptions>().BindConfiguration("Google");
         services.AddOptions<MongoOptions>().BindConfiguration("Mongo");
+        services.AddOptions<TelegramOptions>().BindConfiguration("Telegram");
         services.AddOptions<VoiceMakerOptions>().BindConfiguration("VoiceMaker");
     }
 }

@@ -1,5 +1,3 @@
-using VoicerStudio.Application.Models.ConferenceTranslations;
-
 namespace VoicerStudio.Application.Models.TranslationDocs;
 
 public class ParseTranslationDocResult

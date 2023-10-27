@@ -1,11 +1,13 @@
 using System.Net;
 using FluentValidation;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using NeerCore.Exceptions;
-using VoicerStudio.Api.Extensions;
+using VoicerStudio.Api.Shared.Extensions;
 
-namespace VoicerStudio.Api.Middlewares;
+namespace VoicerStudio.Api.Shared.Middlewares;
 
-internal sealed class AppExceptionHandler : IMiddleware
+public sealed class AppExceptionHandler : IMiddleware
 {
     private readonly ILogger<AppExceptionHandler> _logger;
 

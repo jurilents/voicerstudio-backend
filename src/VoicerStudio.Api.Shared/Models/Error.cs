@@ -1,4 +1,4 @@
-namespace VoicerStudio.Application.Models;
+namespace VoicerStudio.Api.Shared.Models;
 
 public record Error(
     int Code,

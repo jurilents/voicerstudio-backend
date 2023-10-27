@@ -1,22 +1,25 @@
 using Serilog;
 using Serilog.Events;
-using ILogger = Serilog.ILogger;
+using Serilog.Sinks.SystemConsole.Themes;
 
-namespace VoicerStudio.Api;
+namespace VoicerStudio.Api.Shared.Logging;
 
 public static class AppLoggerFactory
 {
     public static ILogger CreateLogger()
     {
-        return new LoggerConfiguration()
+        Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
             .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
             .MinimumLevel.Override("Microsoft.AspNetCore.Hosting", LogEventLevel.Information)
             .MinimumLevel.Override("Microsoft.Hosting.Lifetime", LogEventLevel.Information)
+            .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database", LogEventLevel.Warning)
             .MinimumLevel.Override("VoicerStudio", LogEventLevel.Debug)
             .Enrich.FromLogContext()
-            .WriteTo.Console()
+            .WriteTo.Console(
+                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] <{SourceContext}> {Message:lj}{NewLine}{Exception}",
+                theme: AnsiConsoleTheme.Code)
             .WriteTo.File(
                 Path.Combine("logs/.log"),
                 rollingInterval: RollingInterval.Day,
@@ -26,5 +29,6 @@ public static class AppLoggerFactory
                 shared: true,
                 flushToDiskInterval: TimeSpan.FromSeconds(1))
             .CreateLogger();
+        return Log.Logger;
     }
 }

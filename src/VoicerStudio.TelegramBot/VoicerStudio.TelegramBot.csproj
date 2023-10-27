@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="7.0.13" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
+    <PackageReference Include="Telegram.Bot" Version="19.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VoicerStudio.Api.Shared\VoicerStudio.Api.Shared.csproj" />
+    <ProjectReference Include="..\VoicerStudio.Application\VoicerStudio.Application.csproj" />
+    <ProjectReference Include="..\VoicerStudio.Database\VoicerStudio.Database.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -7,19 +7,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="DeepL.net" Version="1.7.1" />
-    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="FluentValidation" Version="11.8.0" />
     <PackageReference Include="Google.Apis.Discovery.v1" Version="1.62.0" />
-    <PackageReference Include="Google.Apis.Docs.v1" Version="1.62.0.2979" />
+    <PackageReference Include="Google.Apis.Docs.v1" Version="1.62.1.3193" />
     <PackageReference Include="Google.Apis.Drive.v3" Version="1.62.0.3155" />
-    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.60.0.3071" />
-    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.29.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.21.0" />
-    <PackageReference Include="NAudio" Version="2.1.0" />
+    <PackageReference Include="Google.Apis.Sheets.v4" Version="1.62.0.3148" />
+    <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.32.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="7.0.0" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="NAudio.Lame" Version="2.1.0" />
     <PackageReference Include="NeerCore" Version="2.0.1" />
+    <PackageReference Include="NeerCore.DependencyInjection" Version="2.0.1" />
     <PackageReference Include="SoundTouch.Net" Version="2.3.2" />
     <PackageReference Include="Teva.Common.Cultures" Version="1.0.2" />
+    <PackageReference Include="Whisper.net" Version="1.4.7" />
+    <PackageReference Include="Whisper.net.Runtime" Version="1.4.7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -45,6 +52,13 @@
     <Content Include="$(NuGetPackageRoot)\microsoft.cognitiveservices.speech\1.29.0\runtimes\win-x64\native\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Infrastructure\Internal\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VoicerStudio.Database\VoicerStudio.Database.csproj" />
+  </ItemGroup>
 
 
 </Project>

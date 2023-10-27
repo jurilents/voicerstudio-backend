@@ -1,11 +1,12 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
-using VoicerStudio.Application.Models.Speech;
 
-namespace VoicerStudio.Api.Extensions;
+namespace VoicerStudio.Api.Shared.Extensions;
 
 public static class ServiceCollectionExtensions
 {
@@ -30,7 +31,7 @@ public static class ServiceCollectionExtensions
             {
                 Title = "Voicer Studio API",
                 Version = "v1",
-                Description = "Azure & AWS text to speech wrapper",
+                Description = "Text to speech online studio",
             });
 
             c.MapType<TimeSpan>(() => new OpenApiSchema
@@ -48,12 +49,12 @@ public static class ServiceCollectionExtensions
         });
     }
 
-    public static void AddCustomFluentValidation(this IServiceCollection services)
+    public static void AddCustomFluentValidation<T>(this IServiceCollection services)
     {
         services.AddFluentValidationAutoValidation(fv =>
             fv.DisableDataAnnotationsValidation = true);
         services.AddFluentValidationClientsideAdapters();
-        services.AddValidatorsFromAssemblyContaining<SpeechGenerateRequest>(ServiceLifetime.Transient);
+        services.AddValidatorsFromAssemblyContaining<T>(ServiceLifetime.Transient);
         services.AddFluentValidationRulesToSwagger();
     }
 }

@@ -149,7 +149,6 @@ public class AzureCognitiveService : ICognitiveService
 
         return result.Voices
             .GroupBy(voice => voice.Locale)
-            .OrderBy(group => group.Key)
             .Select(voices => new LanguageWithVoices
             {
                 Locale = voices.Key,
@@ -170,7 +169,9 @@ public class AzureCognitiveService : ICognitiveService
                         Roles = string.IsNullOrEmpty(roles) ? Array.Empty<string>() : JsonSerializer.Deserialize<string[]>(roles),
                     };
                 }).ToArray()
-            }).ToArray();
+            })
+            .OrderBy(lang => lang.DisplayName)
+            .ToArray();
     }
 
     private static SpeechSynthesisOutputFormat GetSpeechOutputFormat(AudioFormat outputFormat, AudioSampleRate sampleRate) =>

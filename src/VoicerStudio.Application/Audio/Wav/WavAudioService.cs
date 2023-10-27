@@ -1,7 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NAudio.Wave;
-using NeerCore.Exceptions;
 using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;

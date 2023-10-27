@@ -1,10 +1,11 @@
 using System.Globalization;
 using System.Net;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using NeerCore.Exceptions;
 using NeerCore.Json;
 
-namespace VoicerStudio.Api.Extensions;
+namespace VoicerStudio.Api.Shared.Extensions;
 
 public static class HttpResponseExtensions
 {

@@ -1,0 +1,5 @@
+{
+  "ConnectionStrings": {
+    "Default": "Server=localhost,1433;Database=VoicerStudio;User=sa;Password=MyPassword1234;MultipleActiveResultSets=True;TrustServerCertificate=True"
+  }
+}

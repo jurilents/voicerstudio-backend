@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using VoicerStudio.Api.Controllers.Core;
-using VoicerStudio.Application.Models;
 using VoicerStudio.Application.Models.TranslationDocs;
 using VoicerStudio.Application.Services;
 
