@@ -1,9 +1,9 @@
 using System.Globalization;
 using System.Text.Json.Serialization;
 using Serilog;
-using VoicerStudio.Api.Shared.Extensions;
-using VoicerStudio.Api.Shared.Logging;
-using VoicerStudio.Api.Shared.Middlewares;
+using VoicerStudio.Api.Core;
+using VoicerStudio.Api.Extensions;
+using VoicerStudio.Api.Middlewares;
 using VoicerStudio.Application;
 using VoicerStudio.Application.Models.Speech;
 using VoicerStudio.CognitiveServices;

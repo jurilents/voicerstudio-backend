@@ -1,12 +1,10 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
 
-namespace VoicerStudio.Api.Shared.Extensions;
+namespace VoicerStudio.Api.Extensions;
 
 public static class ServiceCollectionExtensions
 {

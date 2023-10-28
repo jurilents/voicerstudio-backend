@@ -9,7 +9,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VoicerStudio.Api.Shared\VoicerStudio.Api.Shared.csproj" />
     <ProjectReference Include="..\VoicerStudio.CognitiveServices\VoicerStudio.CognitiveServices.csproj" />
     <ProjectReference Include="..\VoicerStudio.TelegramBot\VoicerStudio.TelegramBot.csproj" />
   </ItemGroup>
@@ -25,6 +24,13 @@
 
   <ItemGroup>
     <Content Include="ssl\*.*" CopyToOutputDirectory="Always" TargetPath="ssl\%(Filename)%(Extension)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="MicroElements.Swashbuckle.FluentValidation" Version="5.7.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
   </ItemGroup>
 
 

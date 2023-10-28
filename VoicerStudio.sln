@@ -8,8 +8,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicerStudio.TelegramBot", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicerStudio.Database", "src\VoicerStudio.Database\VoicerStudio.Database.csproj", "{4C7D1571-5E31-4536-B2F4-E119E239B486}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicerStudio.Api.Shared", "src\VoicerStudio.Api.Shared\VoicerStudio.Api.Shared.csproj", "{032E88FF-82FC-4C2B-B0C5-99AA9D249BAB}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicerStudio.CognitiveServices", "src\VoicerStudio.CognitiveServices\VoicerStudio.CognitiveServices.csproj", "{1E855219-84F8-460C-8B2D-7800A366C1B9}"
 EndProject
 Global
@@ -34,10 +32,6 @@ Global
 		{4C7D1571-5E31-4536-B2F4-E119E239B486}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4C7D1571-5E31-4536-B2F4-E119E239B486}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4C7D1571-5E31-4536-B2F4-E119E239B486}.Release|Any CPU.Build.0 = Release|Any CPU
-		{032E88FF-82FC-4C2B-B0C5-99AA9D249BAB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{032E88FF-82FC-4C2B-B0C5-99AA9D249BAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{032E88FF-82FC-4C2B-B0C5-99AA9D249BAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{032E88FF-82FC-4C2B-B0C5-99AA9D249BAB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E855219-84F8-460C-8B2D-7800A366C1B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1E855219-84F8-460C-8B2D-7800A366C1B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E855219-84F8-460C-8B2D-7800A366C1B9}.Release|Any CPU.ActiveCfg = Release|Any CPU

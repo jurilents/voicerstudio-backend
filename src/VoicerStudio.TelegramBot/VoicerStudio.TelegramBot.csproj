@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VoicerStudio.Api.Shared\VoicerStudio.Api.Shared.csproj" />
     <ProjectReference Include="..\VoicerStudio.Application\VoicerStudio.Application.csproj" />
     <ProjectReference Include="..\VoicerStudio.Database\VoicerStudio.Database.csproj" />
   </ItemGroup>

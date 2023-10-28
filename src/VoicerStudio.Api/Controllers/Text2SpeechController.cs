@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using VoicerStudio.Api.Core;
-using VoicerStudio.Api.Shared.Extensions;
+using VoicerStudio.Api.Extensions;
 using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Models;
 using VoicerStudio.Application.Models.Speech;

@@ -1,8 +1,9 @@
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.SystemConsole.Themes;
+using ILogger = Serilog.ILogger;
 
-namespace VoicerStudio.Api.Shared.Logging;
+namespace VoicerStudio.Api.Core;
 
 public static class AppLoggerFactory
 {

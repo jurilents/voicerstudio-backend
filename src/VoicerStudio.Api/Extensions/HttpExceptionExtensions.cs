@@ -1,8 +1,8 @@
 using FluentValidation;
 using NeerCore.Exceptions;
-using VoicerStudio.Api.Shared.Models;
+using VoicerStudio.Application.Models;
 
-namespace VoicerStudio.Api.Shared.Extensions;
+namespace VoicerStudio.Api.Extensions;
 
 public static class HttpExceptionExtensions
 {
