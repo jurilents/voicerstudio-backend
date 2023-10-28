@@ -30,7 +30,6 @@ public static class DependencyInjection
         services.AddSingleton<ILocalizedMessages, EnglishLocalizedMessages>();
         services.AddSingleton<ILocalizedMessages, RussianLocalizedMessages>();
 
-
         services.AddHostedService<ConfigureWebhookHostedService>();
 
         // Register named HttpClient to get benefits of IHttpClientFactory

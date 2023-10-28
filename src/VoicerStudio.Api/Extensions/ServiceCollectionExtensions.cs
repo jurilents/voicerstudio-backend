@@ -3,6 +3,7 @@ using FluentValidation.AspNetCore;
 using MicroElements.Swashbuckle.FluentValidation.AspNetCore;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace VoicerStudio.Api.Extensions;
 
@@ -36,6 +37,12 @@ public static class ServiceCollectionExtensions
             {
                 Type = "string",
                 Example = new OpenApiString("00:00:00.0000000")
+            });
+
+            c.CustomSchemaIds(type =>
+            {
+                if (type.FullName!.StartsWith("Telegram.Bot")) return "xTelegram." + type.Name;
+                return type.Name;
             });
 
             var xmlFiles = new[] { "VoicerStudio.Api.xml", "VoicerStudio.Application.xml" };

@@ -6,7 +6,7 @@ namespace VoicerStudio.Application.Models.Speech;
 
 public class SpeechGenerateRequest
 {
-    public CognitiveServiceName Service { get; set; }
+    public CredentialsType Service { get; set; }
 
     /// <summary>
     /// The language that you want the voice to speak.

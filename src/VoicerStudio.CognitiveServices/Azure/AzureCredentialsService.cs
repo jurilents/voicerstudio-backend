@@ -26,7 +26,7 @@ internal class AzureCredentialsService : ICredentialsService
     }
 
 
-    public CognitiveServiceName ServiceName => CognitiveServiceName.Azure;
+    public CredentialsType ServiceName => CredentialsType.Azure;
 
     public async Task<SecureCredentialsResult> SecureAsync(SecureCredentialsRequest request)
     {

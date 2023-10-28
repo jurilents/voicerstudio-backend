@@ -5,12 +5,8 @@ namespace VoicerStudio.Application.Models.Speech;
 
 public class SecureCredentialsRequest
 {
-    public CognitiveServiceName Service { get; set; }
+    public CredentialsType Service { get; set; }
     public Dictionary<string, string> Data { get; set; } = null!;
-
-    // [JsonIgnore] public string VoiceMakerApiKey => Data.TryGetValue("apiKey", out var value)
-    //     ? value
-    //     : throw new ValidationFailedException("VoiceMaker service required property 'apiKey' does not provided");
 }
 
 public class SecureCredentialsRequestValidator : AbstractValidator<SecureCredentialsRequest>
@@ -20,14 +16,21 @@ public class SecureCredentialsRequestValidator : AbstractValidator<SecureCredent
         RuleFor(o => o.Service).IsInEnum();
         RuleFor(o => o.Data).NotEmpty();
 
-        When(o => o.Service == CognitiveServiceName.Azure, () =>
+        When(o => o.Service == CredentialsType.AuthorizerBot, () =>
+        {
+            RuleFor(o => o.Data).Must(data =>
+                    data.ContainsKey("userToken"))
+                .WithMessage("Data properties are required for custom telegram bot authorization: 'userToken'");
+        });
+
+        When(o => o.Service == CredentialsType.Azure, () =>
         {
             RuleFor(o => o.Data).Must(data =>
                     data.ContainsKey("subscriptionKey") && data.ContainsKey("region"))
                 .WithMessage("Data properties are required for Azure service: 'subscriptionKey' and 'region'");
         });
 
-        When(o => o.Service == CognitiveServiceName.VoiceMaker, () =>
+        When(o => o.Service == CredentialsType.VoiceMaker, () =>
         {
             RuleFor(o => o.Data).Must(data =>
                     data.ContainsKey("apiKey"))

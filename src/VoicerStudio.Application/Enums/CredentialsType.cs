@@ -1,7 +1,8 @@
 namespace VoicerStudio.Application.Enums;
 
-public enum CognitiveServiceName
+public enum CredentialsType
 {
+    AuthorizerBot,
     Azure,
     VoiceMaker,
 }

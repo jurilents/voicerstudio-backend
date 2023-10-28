@@ -25,7 +25,7 @@ internal class VoiceMakerCredentialsService : ICredentialsService
     }
 
 
-    public CognitiveServiceName ServiceName => CognitiveServiceName.VoiceMaker;
+    public CredentialsType ServiceName => CredentialsType.VoiceMaker;
 
     public async Task<SecureCredentialsResult> SecureAsync(SecureCredentialsRequest request)
     {

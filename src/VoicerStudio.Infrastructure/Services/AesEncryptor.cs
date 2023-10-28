@@ -11,18 +11,18 @@ internal sealed class AesEncryptor : IEncryptor
     private const string SecretsFilePath = "secret.aes";
 
     private readonly ILogger<AesEncryptor> _logger;
-    private readonly AesOptions _options;
+    private readonly AesSettings _settings;
 
     public AesEncryptor(ILogger<AesEncryptor> logger)
     {
         _logger = logger;
-        _options = InitAesOptions();
+        _settings = InitAesOptions();
     }
 
     public string Encrypt(string plainText)
     {
-        var cipher = CreateCipher(_options.Key);
-        cipher.IV = Convert.FromBase64String(_options.IV);
+        var cipher = CreateCipher(_settings.Key);
+        cipher.IV = Convert.FromBase64String(_settings.IV);
 
         var cryptTransform = cipher.CreateEncryptor();
         var plaintext = Encoding.UTF8.GetBytes(plainText);
@@ -33,8 +33,8 @@ internal sealed class AesEncryptor : IEncryptor
 
     public string Decrypt(string encryptedText)
     {
-        var cipher = CreateCipher(_options.Key);
-        cipher.IV = Convert.FromBase64String(_options.IV);
+        var cipher = CreateCipher(_settings.Key);
+        cipher.IV = Convert.FromBase64String(_settings.IV);
 
         var cryptTransform = cipher.CreateDecryptor();
         var encryptedBytes = Convert.FromBase64String(encryptedText);
@@ -43,7 +43,7 @@ internal sealed class AesEncryptor : IEncryptor
         return Encoding.UTF8.GetString(plainBytes);
     }
 
-    private AesOptions InitAesOptions()
+    private AesSettings InitAesOptions()
     {
         if (File.Exists(SecretsFilePath))
         {
@@ -53,7 +53,7 @@ internal sealed class AesEncryptor : IEncryptor
                 var fileData = File.ReadAllBytes(SecretsFilePath);
                 var fileContent = Encoding.Unicode.GetString(fileData).Split('\n');
 
-                return new AesOptions
+                return new AesSettings
                 {
                     Key = fileContent[0],
                     IV = fileContent[1],
@@ -72,7 +72,7 @@ internal sealed class AesEncryptor : IEncryptor
         var fileBytes = Encoding.Unicode.GetBytes($"{key}\n{ivBase64}");
         File.WriteAllBytes(SecretsFilePath, fileBytes);
 
-        return new AesOptions
+        return new AesSettings
         {
             Key = key,
             IV = ivBase64,

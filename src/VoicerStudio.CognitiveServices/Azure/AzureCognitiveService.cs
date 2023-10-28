@@ -36,7 +36,7 @@ public class AzureCognitiveService : ICognitiveService
     }
 
 
-    public CognitiveServiceName ServiceName => CognitiveServiceName.Azure;
+    public CredentialsType ServiceName => CredentialsType.Azure;
 
     private ICredentialsService CredentialsService => _credentialsServices.GetService(ServiceName);
 

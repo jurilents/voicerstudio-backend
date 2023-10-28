@@ -14,7 +14,7 @@ public sealed class CognitiveServicesProvider
     }
 
 
-    public ICognitiveService GetService(CognitiveServiceName serviceName)
+    public ICognitiveService GetService(CredentialsType serviceName)
     {
         var audioService = _cognitiveServices.FirstOrDefault(x => x.ServiceName == serviceName);
         return audioService

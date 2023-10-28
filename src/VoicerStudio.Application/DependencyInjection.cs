@@ -17,7 +17,6 @@ public static class DependencyInjection
         services.AddOptions<AzureOptions>().BindConfiguration("Azure");
         services.AddOptions<DeeplOptions>().BindConfiguration("Deepl");
         services.AddOptions<GoogleOptions>().BindConfiguration("Google");
-        services.AddOptions<MongoOptions>().BindConfiguration("Mongo");
         services.AddOptions<SecurityOptions>().BindConfiguration("Security");
         services.AddOptions<TelegramOptions>().BindConfiguration("Telegram");
         services.AddOptions<VoiceMakerOptions>().BindConfiguration("VoiceMaker");
