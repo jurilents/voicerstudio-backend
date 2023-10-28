@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace VoicerStudio.Api.Controllers.Core;
+namespace VoicerStudio.Api.Core;
 
 [ApiController]
 [Produces("application/json")]

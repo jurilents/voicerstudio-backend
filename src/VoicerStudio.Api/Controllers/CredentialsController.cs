@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using VoicerStudio.Api.Controllers.Core;
+using VoicerStudio.Api.Core;
 using VoicerStudio.Application.Models.Speech;
 using VoicerStudio.CognitiveServices;
 
