@@ -8,6 +8,7 @@ using VoicerStudio.Application;
 using VoicerStudio.Application.Models.Speech;
 using VoicerStudio.CognitiveServices;
 using VoicerStudio.Database;
+using VoicerStudio.Infrastructure;
 using VoicerStudio.TelegramBot;
 
 var logger = AppLoggerFactory.CreateLogger();
@@ -43,7 +44,9 @@ static void ConfigureBuilder(WebApplicationBuilder builder)
 {
     builder.Host.UseSerilog();
 
+    builder.Services.AddDatabase();
     builder.Services.AddApplication();
+    builder.Services.AddInfrastructure();
     builder.Services.AddCognitiveServices();
     builder.Services.AddTelegramBot();
 

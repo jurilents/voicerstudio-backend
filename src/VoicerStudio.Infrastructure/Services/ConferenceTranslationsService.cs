@@ -7,7 +7,7 @@ using NeerCore.Json;
 using VoicerStudio.Application.Models.ConferenceTranslations;
 using VoicerStudio.Application.Services;
 
-namespace VoicerStudio.Application.Infrastructure;
+namespace VoicerStudio.Infrastructure.Services;
 
 internal class ConferenceTranslationsService : IConferenceTranslationsService
 {

@@ -13,4 +13,10 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.32.1" />
   </ItemGroup>
+
+  <ItemGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <Content Include="$(NuGetPackageRoot)\microsoft.cognitiveservices.speech\1.29.0\runtimes\win-x64\native\Microsoft.CognitiveServices.Speech.core.dll" />
+    <Content Include="$(NuGetPackageRoot)\microsoft.cognitiveservices.speech\1.29.0\runtimes\win-x64\native\Microsoft.CognitiveServices.Speech.extension.audio.sys.dll" />
+  </ItemGroup>
+
 </Project>

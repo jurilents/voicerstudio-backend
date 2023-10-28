@@ -5,7 +5,7 @@ using VoicerStudio.Application.Models;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
 
-namespace VoicerStudio.Application.Infrastructure;
+namespace VoicerStudio.Infrastructure.Services;
 
 public class DeeplTranslateService : ITranslateService
 {

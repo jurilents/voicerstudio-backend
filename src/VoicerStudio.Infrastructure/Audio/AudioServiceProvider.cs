@@ -2,9 +2,9 @@ using NeerCore.Exceptions;
 using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Services;
 
-namespace VoicerStudio.Application.Audio;
+namespace VoicerStudio.Infrastructure.Audio;
 
-public sealed class AudioServiceProvider
+public sealed class AudioServiceProvider : IAudioServiceProvider
 {
     private readonly IEnumerable<IAudioService> _audioServices;
 

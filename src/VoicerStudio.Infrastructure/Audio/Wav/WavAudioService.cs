@@ -5,7 +5,7 @@ using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
 
-namespace VoicerStudio.Application.Audio.Wav;
+namespace VoicerStudio.Infrastructure.Audio.Wav;
 
 internal class WavAudioService : IAudioService
 {

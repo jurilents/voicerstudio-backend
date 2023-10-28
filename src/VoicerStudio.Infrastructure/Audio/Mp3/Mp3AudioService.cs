@@ -6,7 +6,7 @@ using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
 
-namespace VoicerStudio.Application.Audio.Mp3;
+namespace VoicerStudio.Infrastructure.Audio.Mp3;
 
 internal class Mp3AudioService : IAudioService
 {

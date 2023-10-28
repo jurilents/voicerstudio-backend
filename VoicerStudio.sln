@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicerStudio.Database", "sr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicerStudio.CognitiveServices", "src\VoicerStudio.CognitiveServices\VoicerStudio.CognitiveServices.csproj", "{1E855219-84F8-460C-8B2D-7800A366C1B9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VoicerStudio.Infrastructure", "src\VoicerStudio.Infrastructure\VoicerStudio.Infrastructure.csproj", "{684DE3C4-55E8-4AC4-939A-4266D7B3247C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,5 +38,9 @@ Global
 		{1E855219-84F8-460C-8B2D-7800A366C1B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E855219-84F8-460C-8B2D-7800A366C1B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E855219-84F8-460C-8B2D-7800A366C1B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{684DE3C4-55E8-4AC4-939A-4266D7B3247C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{684DE3C4-55E8-4AC4-939A-4266D7B3247C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{684DE3C4-55E8-4AC4-939A-4266D7B3247C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{684DE3C4-55E8-4AC4-939A-4266D7B3247C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

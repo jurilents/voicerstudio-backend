@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
 
-namespace VoicerStudio.Application.Infrastructure;
+namespace VoicerStudio.Infrastructure.Services;
 
 internal sealed class AesEncryptor : IEncryptor
 {

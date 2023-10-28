@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\VoicerStudio.Application\VoicerStudio.Application.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="NAudio.Lame" Version="2.1.0" />
+    <PackageReference Include="NeerCore.DependencyInjection" Version="2.0.1" />
+    <PackageReference Include="SoundTouch.Net" Version="2.3.2" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <NuGetPackageRoot>$(USERPROFILE)\.nuget\packages</NuGetPackageRoot>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Msacm32">
+      <HintPath>Msacm32.dll</HintPath>
+    </Reference>
+    <Reference Include="SoundTouch">
+      <HintPath>SoundTouch.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

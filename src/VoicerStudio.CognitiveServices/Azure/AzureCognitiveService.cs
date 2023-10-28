@@ -5,7 +5,6 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NeerCore.Exceptions;
-using VoicerStudio.Application.Audio;
 using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Models;
 using VoicerStudio.Application.Models.Speech;
@@ -21,13 +20,13 @@ public class AzureCognitiveService : ICognitiveService
 
     private readonly AzureOptions _azure;
     private readonly IMemoryCache _memoryCache;
-    private readonly AudioServiceProvider _audioServices;
+    private readonly IAudioServiceProvider _audioServices;
     private readonly ILogger<AzureCognitiveService> _logger;
     private readonly CredentialsServicesProvider _credentialsServices;
 
     public AzureCognitiveService(
         ILogger<AzureCognitiveService> logger, IOptions<AzureOptions> optionsAccessor,
-        IMemoryCache memoryCache, CredentialsServicesProvider credentialsServices, AudioServiceProvider audioServices)
+        IMemoryCache memoryCache, CredentialsServicesProvider credentialsServices, IAudioServiceProvider audioServices)
     {
         _logger = logger;
         _memoryCache = memoryCache;

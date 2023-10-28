@@ -10,20 +10,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VoicerStudio.CognitiveServices\VoicerStudio.CognitiveServices.csproj" />
+    <ProjectReference Include="..\VoicerStudio.Infrastructure\VoicerStudio.Infrastructure.csproj" />
     <ProjectReference Include="..\VoicerStudio.TelegramBot\VoicerStudio.TelegramBot.csproj" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <Content Update="google-credentials.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="..\..\.dockerignore">
-      <Link>.dockerignore</Link>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Include="ssl\*.*" CopyToOutputDirectory="Always" TargetPath="ssl\%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,10 +21,18 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0" />
   </ItemGroup>
 
-
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Content Update="google-credentials.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
+  </ItemGroup>
 
 </Project>

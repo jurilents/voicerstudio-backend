@@ -1,4 +1,4 @@
-namespace VoicerStudio.Database.Options;
+namespace VoicerStudio.Application.Options;
 
 public class SecurityOptions
 {

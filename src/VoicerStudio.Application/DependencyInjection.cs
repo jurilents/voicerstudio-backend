@@ -1,10 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
-using VoicerStudio.Application.Audio;
-using VoicerStudio.Application.Audio.Mp3;
-using VoicerStudio.Application.Audio.Wav;
-using VoicerStudio.Application.Infrastructure;
 using VoicerStudio.Application.Options;
-using VoicerStudio.Application.Services;
 
 namespace VoicerStudio.Application;
 
@@ -14,20 +9,7 @@ public static class DependencyInjection
     {
         services.AddMemoryCache();
         services.AddAllOptions();
-        services.AddInfrastructure();
     }
-
-    private static void AddInfrastructure(this IServiceCollection services)
-    {
-        services.AddScoped<IEncryptor, AesEncryptor>();
-
-        services.AddScoped<IAudioService, WavAudioService>();
-        services.AddScoped<IAudioService, Mp3AudioService>();
-        services.AddScoped<AudioServiceProvider>();
-
-        services.AddScoped<ITranslateService, DeeplTranslateService>();
-    }
-
 
     private static void AddAllOptions(this IServiceCollection services)
     {
@@ -36,6 +18,7 @@ public static class DependencyInjection
         services.AddOptions<DeeplOptions>().BindConfiguration("Deepl");
         services.AddOptions<GoogleOptions>().BindConfiguration("Google");
         services.AddOptions<MongoOptions>().BindConfiguration("Mongo");
+        services.AddOptions<SecurityOptions>().BindConfiguration("Security");
         services.AddOptions<TelegramOptions>().BindConfiguration("Telegram");
         services.AddOptions<VoiceMakerOptions>().BindConfiguration("VoiceMaker");
     }
