@@ -6,6 +6,9 @@ using VoicerStudio.Api.Shared.Logging;
 using VoicerStudio.Api.Shared.Middlewares;
 using VoicerStudio.Application;
 using VoicerStudio.Application.Models.Speech;
+using VoicerStudio.CognitiveServices;
+using VoicerStudio.Database;
+using VoicerStudio.TelegramBot;
 
 var logger = AppLoggerFactory.CreateLogger();
 var culture = new CultureInfo("en-US");
@@ -21,6 +24,8 @@ try
     var app = builder.Build();
     logger.Debug("Running web application...");
     ConfigureWebApp(app);
+
+    app.Services.MigrateDatabaseAsync().Wait();
 
     app.Run();
 }
@@ -39,6 +44,8 @@ static void ConfigureBuilder(WebApplicationBuilder builder)
     builder.Host.UseSerilog();
 
     builder.Services.AddApplication();
+    builder.Services.AddCognitiveServices();
+    builder.Services.AddTelegramBot();
 
     builder.Services.AddCustomCors(builder.Configuration);
     builder.Services.AddCustomSwagger();

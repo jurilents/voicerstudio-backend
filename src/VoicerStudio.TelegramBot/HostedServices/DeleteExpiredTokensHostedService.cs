@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 using VoicerStudio.Database.Context;
 
 namespace VoicerStudio.TelegramBot.HostedServices;

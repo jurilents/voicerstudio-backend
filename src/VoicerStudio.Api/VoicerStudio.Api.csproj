@@ -10,7 +10,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VoicerStudio.Api.Shared\VoicerStudio.Api.Shared.csproj" />
-    <ProjectReference Include="..\VoicerStudio.Application\VoicerStudio.Application.csproj" />
+    <ProjectReference Include="..\VoicerStudio.CognitiveServices\VoicerStudio.CognitiveServices.csproj" />
+    <ProjectReference Include="..\VoicerStudio.TelegramBot\VoicerStudio.TelegramBot.csproj" />
   </ItemGroup>
   
   <ItemGroup>

@@ -2,10 +2,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using NeerCore.DependencyInjection.Extensions;
 using Telegram.Bot;
-using VoicerStudio.TelegramBot.Bot.Commands;
-using VoicerStudio.TelegramBot.Bot.Core;
-using VoicerStudio.TelegramBot.Bot.Localization;
+using VoicerStudio.Application.Options;
+using VoicerStudio.TelegramBot.Commands;
+using VoicerStudio.TelegramBot.Core;
 using VoicerStudio.TelegramBot.HostedServices;
+using VoicerStudio.TelegramBot.Localization;
 
 namespace VoicerStudio.TelegramBot;
 
