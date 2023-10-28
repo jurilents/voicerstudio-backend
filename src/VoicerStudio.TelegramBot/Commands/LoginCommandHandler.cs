@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Telegram.Bot;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using VoicerStudio.Application.Repositories;
+using VoicerStudio.Database.Repositories;
 using VoicerStudio.TelegramBot.Core;
 
 namespace VoicerStudio.TelegramBot.Commands;

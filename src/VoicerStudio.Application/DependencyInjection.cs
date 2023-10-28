@@ -33,7 +33,6 @@ public static class DependencyInjection
     {
         services.AddOptions<AudioOptions>().BindConfiguration("Audio");
         services.AddOptions<AzureOptions>().BindConfiguration("Azure");
-        services.AddOptions<ConferenceTranslationsOptions>().BindConfiguration("ConferenceTranslations");
         services.AddOptions<DeeplOptions>().BindConfiguration("Deepl");
         services.AddOptions<GoogleOptions>().BindConfiguration("Google");
         services.AddOptions<MongoOptions>().BindConfiguration("Mongo");

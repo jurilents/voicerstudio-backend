@@ -2,12 +2,12 @@ using System.Security.Cryptography;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using NeerCore.DependencyInjection;
-using VoicerStudio.Application.Repositories;
 using VoicerStudio.Database.Context;
 using VoicerStudio.Database.Entities;
 using VoicerStudio.Database.Options;
+using VoicerStudio.Database.Repositories;
 
-namespace VoicerStudio.Application.Infrastructure.Repositories;
+namespace VoicerStudio.Database.Infrastructure;
 
 [Service]
 internal class TokenRepository : ITokenRepository

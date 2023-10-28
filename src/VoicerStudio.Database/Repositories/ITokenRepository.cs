@@ -1,6 +1,6 @@
 using VoicerStudio.Database.Entities;
 
-namespace VoicerStudio.Application.Repositories;
+namespace VoicerStudio.Database.Repositories;
 
 public interface ITokenRepository
 {
