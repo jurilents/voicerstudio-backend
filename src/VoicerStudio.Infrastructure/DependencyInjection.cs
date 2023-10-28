@@ -15,7 +15,7 @@ public static class DependencyInjection
 
         services.AddScoped<IAudioService, WavAudioService>();
         services.AddScoped<IAudioService, Mp3AudioService>();
-        services.AddScoped<AudioServiceProvider>();
+        services.AddScoped<IAudioServiceProvider, AudioServiceProvider>();
 
         services.AddScoped<ITranslateService, DeeplTranslateService>();
     }
