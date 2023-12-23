@@ -56,6 +56,7 @@ static void ConfigureBuilder(WebApplicationBuilder builder)
 
     builder.Services.AddScoped<AppExceptionHandler>();
     builder.Services.AddControllers()
+        .AddNewtonsoftJson()
         .AddJsonOptions(json => json.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 }
 

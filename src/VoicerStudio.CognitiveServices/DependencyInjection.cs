@@ -3,6 +3,7 @@ using Microsoft.Extensions.Options;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
 using VoicerStudio.CognitiveServices.Azure;
+using VoicerStudio.CognitiveServices.Shared;
 using VoicerStudio.CognitiveServices.VoiceMaker;
 
 namespace VoicerStudio.CognitiveServices;
@@ -11,6 +12,7 @@ public static class DependencyInjection
 {
     public static void AddCognitiveServices(this IServiceCollection services)
     {
+        services.AddTelegramAuthorization();
         services.AddAzureCognitiveService();
         services.AddVoiceMakerCognitiveService();
 
@@ -36,5 +38,12 @@ public static class DependencyInjection
             httpClient.BaseAddress = new Uri(options.ApiUrl);
             httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Content-Type", "application/json");
         });
+    }
+
+
+    private static void AddTelegramAuthorization(this IServiceCollection services)
+    {
+        services.AddScoped<TelegramBotAuthorizer>();
+        services.AddScoped<ICredentialsService, TelegramBotCredentials>();
     }
 }

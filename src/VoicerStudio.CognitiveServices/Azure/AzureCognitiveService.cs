@@ -25,8 +25,8 @@ public class AzureCognitiveService : ICognitiveService
     private readonly CredentialsServicesProvider _credentialsServices;
 
     public AzureCognitiveService(
-        ILogger<AzureCognitiveService> logger, IOptions<AzureOptions> optionsAccessor,
-        IMemoryCache memoryCache, CredentialsServicesProvider credentialsServices, IAudioServiceProvider audioServices)
+        ILogger<AzureCognitiveService> logger, IOptions<AzureOptions> optionsAccessor, IMemoryCache memoryCache,
+        CredentialsServicesProvider credentialsServices, IAudioServiceProvider audioServices)
     {
         _logger = logger;
         _memoryCache = memoryCache;
@@ -43,7 +43,7 @@ public class AzureCognitiveService : ICognitiveService
     public async Task<LanguageWithVoices[]> GetLanguagesAsync(string credentials)
     {
         var languages = await _memoryCache.GetOrCreateAsync(
-            CacheKey + _azure.Credentials.Region + credentials,
+            CacheKey + _azure.Region + credentials,
             async _ => await GetLanguagesInternalAsync(credentials));
         return languages!;
     }

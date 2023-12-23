@@ -70,7 +70,7 @@ public class SpeechGenerateRequest
     public TimeSpan? Start { get; set; }
     public TimeSpan? End { get; set; }
 
-    [JsonIgnore] public TimeSpan? Duration => End - Start;
+    [JsonIgnore] public TimeSpan? Duration => Start - Start;
 
     public required AudioFormat OutputFormat { get; set; }
     public required AudioSampleRate SampleRate { get; set; }

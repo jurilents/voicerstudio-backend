@@ -19,7 +19,7 @@ public static class AppLoggerFactory
             .MinimumLevel.Override("VoicerStudio", LogEventLevel.Debug)
             .Enrich.FromLogContext()
             .WriteTo.Console(
-                outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u4}] <{SourceContext}> {Message:lj}{NewLine}{Exception}",
+                outputTemplate: "{Timestamp:HH:mm:ss}  |{Level:u4}|  {Message:lj} <{SourceContext}>{NewLine}{Exception}",
                 theme: AnsiConsoleTheme.Code)
             .WriteTo.File(
                 Path.Combine("logs/.log"),

@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using VoicerStudio.Application.Models;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
 

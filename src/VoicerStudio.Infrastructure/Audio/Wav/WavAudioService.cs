@@ -112,7 +112,7 @@ internal class WavAudioService : IAudioService
     private static void WriteSilence(WaveFileWriter waveFileWriter, double duration)
     {
         var bytesPerMillisecond = waveFileWriter.WaveFormat.AverageBytesPerSecond / 1000.0;
-        var silenceLength = Convert.ToInt32(duration * bytesPerMillisecond);
+        var silenceLength = Convert.ToInt32(duration * bytesPerMillisecond); // TODO: Possible accuracy lose
         var silentBytes = new byte[silenceLength];
         waveFileWriter.Write(silentBytes, 0, silentBytes.Length);
     }

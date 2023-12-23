@@ -18,6 +18,6 @@ public class CredentialsServicesProvider
     {
         var audioService = _credentialsServices.FirstOrDefault(x => x.ServiceName == serviceName);
         return audioService
-            ?? throw new ValidationFailedException($"Invalid cognitive service name provided '{serviceName.ToString().ToLower()}'");
+            ?? throw new ValidationFailedException($"Invalid cognitive service name provided '{serviceName.ToString()}'");
     }
 }

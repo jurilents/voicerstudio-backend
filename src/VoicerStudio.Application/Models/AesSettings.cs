@@ -1,4 +1,4 @@
-namespace VoicerStudio.Application.Options;
+namespace VoicerStudio.Application.Models;
 
 public class AesSettings
 {

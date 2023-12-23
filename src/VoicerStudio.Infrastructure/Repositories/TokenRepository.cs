@@ -25,17 +25,12 @@ internal class TokenRepository : ITokenRepository
     public async Task<AppToken> GenerateAsync(Guid userId, CancellationToken ct)
     {
         var reuseBeforeExpiration = DateTime.UtcNow.AddHours(-12);
-        if (await _dbContext.Tokens.AnyAsync(x => x.UserId == userId && x.Expired > reuseBeforeExpiration, ct))
-            return new AppToken
-            {
-                UserToken = null,
-                JwtToken = null,
-                Expired = default
-            };
+        var token = await _dbContext.Tokens.FirstOrDefaultAsync(x => x.UserId == userId && x.Expired > reuseBeforeExpiration, ct);
+        if (token is not null) return token;
         // throw new InvalidOperationException("User already has a token");
 
         var secureRandomString = GenerateSecureRandomString();
-        var token = new AppToken
+        token = new AppToken
         {
             UserToken = secureRandomString,
             JwtToken = "",

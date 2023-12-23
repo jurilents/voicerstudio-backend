@@ -7,6 +7,7 @@ using VoicerStudio.Application.Enums;
 using VoicerStudio.Application.Models.Speech;
 using VoicerStudio.Application.Options;
 using VoicerStudio.Application.Services;
+using VoicerStudio.CognitiveServices.Shared;
 
 namespace VoicerStudio.CognitiveServices.Azure;
 
@@ -17,30 +18,28 @@ internal class AzureCredentialsService : ICredentialsService
     private const string Prefix = "AZURE_";
 
     private readonly IEncryptor _encryptor;
+    private readonly TelegramBotAuthorizer _telegramBotAuthorizer;
     private readonly AzureOptions _azure;
 
-    public AzureCredentialsService(IEncryptor encryptor, IOptions<AzureOptions> azureOptionsAccessor)
+    public AzureCredentialsService(
+        IEncryptor encryptor, TelegramBotAuthorizer telegramBotAuthorizer, IOptions<AzureOptions> azureOptionsAccessor)
     {
         _encryptor = encryptor;
+        _telegramBotAuthorizer = telegramBotAuthorizer;
         _azure = azureOptionsAccessor.Value;
     }
 
-
     public CredentialsType ServiceName => CredentialsType.Azure;
+
 
     public async Task<SecureCredentialsResult> SecureAsync(SecureCredentialsRequest request)
     {
         var cred = new AzureCredentials(request.Data["subscriptionKey"], request.Data["region"]);
-        if (cred.SubscriptionKey == _azure.User.SubscriptionKey && cred.Region == _azure.User.Region)
-        {
-            // Replace fake creds with real ones from config
-            cred = new AzureCredentials(_azure.Credentials.SubscriptionKey, _azure.Credentials.Region);
-        }
-        else if (!await ValidateAzureCredentialsAsync(cred))
+        if (!await ValidateAzureCredentialsAsync(cred))
             throw new ValidationFailedException("Credentials are invalid");
 
         var jsonString = JsonSerializer.Serialize(cred, JsonConventions.CamelCase);
-        var encryptedCredentials = _encryptor.Encrypt(jsonString);
+        var encryptedCredentials = Prefix + _encryptor.Encrypt(jsonString);
 
         return new SecureCredentialsResult(Credentials: encryptedCredentials);
     }
@@ -50,18 +49,18 @@ internal class AzureCredentialsService : ICredentialsService
         if (string.IsNullOrEmpty(credentials))
             throw new ValidationFailedException("Credentials are invalid");
 
-        if (_azure.User.ApiKeys is not null && _azure.User.ApiKeys.Contains(credentials))
+        if (_telegramBotAuthorizer.IsValidTelegramBotCredentials(credentials))
         {
             return Task.FromResult<IReadOnlyDictionary<string, string>>(new Dictionary<string, string>
             {
-                ["subscriptionKey"] = _azure.Credentials.SubscriptionKey,
-                ["region"] = _azure.Credentials.Region,
+                ["subscriptionKey"] = _azure.SubscriptionKey,
+                ["region"] = _azure.Region,
             });
         }
 
         try
         {
-            var decryptedCredentials = _encryptor.Decrypt(credentials);
+            var decryptedCredentials = _encryptor.Decrypt(credentials[Prefix.Length..]);
             var cred = JsonSerializer.Deserialize<Dictionary<string, string>>(decryptedCredentials)!;
 
             return Task.FromResult<IReadOnlyDictionary<string, string>>(cred);
@@ -71,7 +70,6 @@ internal class AzureCredentialsService : ICredentialsService
             throw new ValidationFailedException("Credentials are invalid");
         }
     }
-
 
     private static async Task<bool> ValidateAzureCredentialsAsync(AzureCredentials cred)
     {
